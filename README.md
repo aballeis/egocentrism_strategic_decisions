@@ -1,6 +1,6 @@
 # Egocentrism in Strategic Decisions
 
-Replication code and data. Participants completed a Qualtrics survey with the Pods-and-Dots game (`interface/`) embedded in an iframe, so the game data exists in two places: the game's own database, and a copy that the game passed back to Qualtrics. `analysis/01_build.R` merges them.
+Research code, data, and materials. Participants completed a Qualtrics survey with the Pods-and-Dots game (`interface/`) embedded in an iframe, so the game data exists in two places: the game's own database, and a copy that the game passed back to Qualtrics. `analysis/01_build.R` merges them.
 
 The manuscript is in preparation and is not included.
 
