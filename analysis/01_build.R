@@ -86,7 +86,10 @@ survey <- qualtrics %>%
       str_detect(educ, "Bach") ~ 4,
       str_detect(educ, "Post") ~ 5
     ),
-    strat_overall = overall_attention_1
+    strat_overall = overall_attention_1,
+    age = as.numeric(age),
+    gender,
+    bonus_round = as.integer(round_implemented)
   ) %>%
   unnest_wider(quiz)
 
@@ -149,13 +152,15 @@ round_data <- rounds %>%
   select(subject_id, draw_mode, action_game_type, round_number, round_grp_number, round_num_within,
          round_grp_within, A1, A2, B1, B2, move1, opt1, category, play1_opt, error, heur_ego, focal_works,
          exp_score, exp_score_lost, score_lost_not_opt, dots_on_screen, round_payoff, time_to_decide,
-         always_opt, all_comps_one_try, crt, numeracy, educ_rank, strat_overall,
+         always_opt, all_comps_one_try, crt, numeracy, educ_rank, strat_overall, age, gender, bonus_round,
          dots_c, cost_c, round_num_within_c, crt_c, numeracy_c, educ_rank_c) %>%
   arrange(subject_id, round_number)
 
 participant_data <- round_data %>%
-  group_by(subject_id, draw_mode, all_comps_one_try, educ_rank, crt, numeracy, educ_rank_c, crt_c, numeracy_c, strat_overall) %>%
-  summarise(ego_all = sum(heur_ego), opt_all = sum(play1_opt), error_rate = mean(error), .groups = "drop")
+  group_by(subject_id, draw_mode, all_comps_one_try, educ_rank, crt, numeracy, educ_rank_c, crt_c, numeracy_c, strat_overall,
+           age, gender) %>%
+  summarise(ego_all = sum(heur_ego), opt_all = sum(play1_opt), error_rate = mean(error),
+            bonus = round_payoff[round_number == first(bonus_round)], .groups = "drop")
 
 write_csv(round_data, "data/built/round_level_data.csv")
 write_csv(participant_data, "data/built/participant_level_data.csv")

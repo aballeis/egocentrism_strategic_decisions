@@ -12,7 +12,7 @@ analysis/                  run from the repo root, in order
   01_build.R               -> data/built/round_level_data.csv, participant_level_data.csv
   02_tables.R              LaTeX tables
   03_figures.R             Figures 2-6
-  04_text_stats.R          prints statistics quoted in the text
+  numbers.R                -> tables_and_charts/numbers_check.md (every statistic in the text)
   fig1_interface.py        Figure 1
 tables_and_charts/
   main/                    main text and Appendices C-E
@@ -40,7 +40,7 @@ pip install matplotlib -r interface/requirements.txt
 Rscript analysis/01_build.R
 Rscript analysis/02_tables.R
 Rscript analysis/03_figures.R
-Rscript analysis/04_text_stats.R
+Rscript analysis/numbers.R
 python  analysis/fig1_interface.py
 ```
 
