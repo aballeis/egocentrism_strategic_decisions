@@ -27,7 +27,7 @@ lin_test_p <- function(model, coefs) {
   b <- coef(model)[names(coefs)]
   V <- vcov(model)[names(coefs), names(coefs), drop = FALSE]
   t <- sum(coefs * b) / sqrt(drop(t(coefs) %*% V %*% coefs))
-  2 * (1 - pnorm(abs(t)))
+  2 * pt(-abs(t), degrees_freedom(model, "t"))
 }
 
 strip_zero <- function(x) gsub("(?<![0-9])0\\.", ".", gsub("(?<![0-9])-0\\.", "-.", x, perl = TRUE), perl = TRUE)

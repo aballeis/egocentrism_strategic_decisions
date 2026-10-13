@@ -13,13 +13,15 @@ to_analyze <- read_csv("data/built/round_level_data.csv", show_col_types = FALSE
 
 fe_reg <- function(fml) feols(fml, data = to_analyze, cluster = ~subject_id)
 
-# Linear combination of coefficients, normal approximation
+# Linear combination of coefficients, t-distribution with df = clusters - 1
 lin_comb <- function(m, coefs) {
   b <- coef(m)[names(coefs)]
   V <- vcov(m)[names(coefs), names(coefs), drop = FALSE]
   est <- sum(coefs * b)
   se <- sqrt(drop(t(coefs) %*% V %*% coefs))
-  c(est = est, t = est / se, p = 2 * (1 - pnorm(abs(est / se))), lo = est - 1.96 * se, hi = est + 1.96 * se)
+  df <- degrees_freedom(m, "t")
+  q <- qt(0.975, df)
+  c(est = est, t = est / se, p = 2 * pt(-abs(est / se), df), lo = est - q * se, hi = est + q * se)
 }
 
 # Single coefficient, fixest t-based inference
