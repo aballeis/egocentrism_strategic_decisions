@@ -1,4 +1,5 @@
 from pathlib import Path
+import shutil
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle, Rectangle
@@ -117,3 +118,7 @@ draw_side(0.50, 1.00, "b.", "teammate",
 out_png = Path("tables_and_charts/main/fig1_pods.png")
 fig.savefig(out_png, bbox_inches="tight", pad_inches=0, facecolor="white")
 plt.close(fig)
+
+paper_dir = Path("../paper_nhb")
+if paper_dir.is_dir():
+    shutil.copy(out_png, paper_dir / out_png.name)

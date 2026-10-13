@@ -2,6 +2,14 @@ library(tidyverse)
 library(fixest)
 
 out_dir <- "tables_and_charts"
+paper_dir <- "../paper_nhb"
+
+mirror <- function(file) {
+  if (!dir.exists(paper_dir)) return(invisible())
+  dest <- file.path(paper_dir, sub("^tables_and_charts/(main/)?", "", file))
+  dir.create(dirname(dest), recursive = TRUE, showWarnings = FALSE)
+  file.copy(file, dest, overwrite = TRUE)
+}
 
 to_analyze <- read_csv("data/built/round_level_data.csv", show_col_types = FALSE) %>%
   mutate(
@@ -130,6 +138,7 @@ write_reg_table <- function(models, term_map, file, dv_label, note_after_stats,
     body, footer,
     "   \\bottomrule", "\\end{tabular*}", "\\par\\endgroup"
   ), file)
+  mirror(file)
 }
 
 obs_row <- function(models) row("Observations", map_chr(models, \(m) fmt_int(m$nobs)))
@@ -303,14 +312,14 @@ focus <- hetero %>%
   arrange(match(strat_overall, names(focus_labels)))
 
 writeLines(c(
-  "\\begingroup", "\\centering",
-  "\\begin{tabular*}{\\linewidth}{@{\\extracolsep{\\fill}}lcc}",
+  "\\begin{tabular}{p{0.58\\textwidth}cc}",
   "   \\toprule",
-  "   Self-reported focus & Take & Give\\\\",
+  "   \\textbf{Self-reported focus} & \\textbf{Take} & \\textbf{Give}\\\\",
   "   \\midrule",
   pmap_chr(focus, \(label, take, give, ...) row(label, c(take, give))),
-  "   \\bottomrule", "\\end{tabular*}", "\\par\\endgroup"
+  "   \\bottomrule", "\\end{tabular}"
 ), file.path(main_dir, "tab_strategy_focus.tex"))
+mirror(file.path(main_dir, "tab_strategy_focus.tex"))
 
 # ---- Table E1: response times ----
 
