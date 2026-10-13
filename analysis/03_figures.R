@@ -5,6 +5,15 @@ library(fixest)
 library(patchwork)
 
 out_dir <- "tables_and_charts"
+paper_dir <- "../paper_nhb"
+
+mirror <- function(file) {
+  if (!dir.exists(paper_dir)) return(invisible())
+  dest <- file.path(paper_dir, sub("^tables_and_charts/(main/)?", "", file))
+  dir.create(dirname(dest), recursive = TRUE, showWarnings = FALSE)
+  file.copy(file, dest, overwrite = TRUE)
+}
+
 to_analyze <- read_csv("data/built/round_level_data.csv", show_col_types = FALSE)
 
 # ---- Bar charts (Figures 2, 3) ----
@@ -131,6 +140,7 @@ save_grob <- function(g, file) {
   grid.newpage()
   grid.draw(g)
   dev.off()
+  mirror(file)
 }
 
 # ---- Heterogeneity diamond (Figure 5) ----
@@ -292,7 +302,10 @@ samps <- list(
   coop_only     = to_analyze %>% filter(action_game_type == "cooperative")        # Appendix D
 )
 
-save_gg <- function(p, file, w, h) ggsave(file, p, width = w, height = h, dpi = 300, bg = "white")
+save_gg <- function(p, file, w, h) {
+  ggsave(file, p, width = w, height = h, dpi = 300, bg = "white")
+  mirror(file)
+}
 
 for (nm in names(samps)) {
   df <- samps[[nm]]
@@ -302,7 +315,7 @@ for (nm in names(samps)) {
     save_grob(fig2_ego(df), file.path(dir, "fig2_ego.png"))
     save_grob(fig3_focal(df), file.path(dir, "fig3_focal.png"))
     save_gg(fig4_stimuli(df), file.path(dir, "fig6_dots_dist.png"), 9.8, 3.4)
+    save_gg(fig6_learning(df), file.path(dir, "fig7_learn.png"), 9.8, 3.6)
   }
   save_gg(fig5_hetero(df), file.path(dir, "fig5_hetero.png"), 13.2, 5.1)
-  if (nm == "main") save_gg(fig6_learning(df), file.path(dir, "fig7_learn.png"), 9.8, 3.6)
 }
