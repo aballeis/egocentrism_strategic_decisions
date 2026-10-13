@@ -211,10 +211,6 @@ for (v in c("cost_c", "dots_c", "round_num_within_c")) {
       sprintf("%s: overall error rate (Table C1)", v), sprintf("b = %.4f, t(%d) = %.2f, %s", o$est, o$df, o$t, f_p(o$p)))
   add("Moderation", "Results, Error cost & complexity; Results, Learning; Table C1 caption",
       sprintf("%s: moderates egocentrism / focalism (Table C1)", v), sprintf("egocentrism %s; focalism %s", f_p(ego_t(m_int, v)$p), f_p(foc_t(m_int, v)$p)))
-  i <- lc(m_int, setNames(1, v))
-  add("Moderation", "Results, Error cost & complexity",
-      sprintf("%s: alternative, main effect in interaction model (Take/Most rounds only)", v),
-      sprintf("b = %.4f, t(%d) = %.2f, %s", i$est, i$df, i$t, f_p(i$p)))
 }
 for (v in c("educ_rank_c", "crt_c", "numeracy_c")) {
   m_int <- fe_reg(as.formula(paste("error ~ category*draw_mode*", v, "+ action_game_type | subject_id")))

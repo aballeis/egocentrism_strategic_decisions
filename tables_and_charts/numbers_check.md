@@ -65,13 +65,10 @@ Linear combinations use t(clusters - 1); round-level models cluster by subject_i
 |---|---|---|---|
 | Results, Error cost & complexity; Results, Learning; Table C1 caption | cost_c: overall error rate (Table C1) | b = -0.0246, t(245) = -6.58, p < .001 |  |
 | Results, Error cost & complexity; Results, Learning; Table C1 caption | cost_c: moderates egocentrism / focalism (Table C1) | egocentrism p = .438; focalism p = .349 |  |
-| Results, Error cost & complexity | cost_c: alternative, main effect in interaction model (Take/Most rounds only) | b = -0.0135, t(245) = -2.28, p = .024 |  |
 | Results, Error cost & complexity; Results, Learning; Table C1 caption | dots_c: overall error rate (Table C1) | b = 0.0010, t(245) = 0.87, p = .385 |  |
 | Results, Error cost & complexity; Results, Learning; Table C1 caption | dots_c: moderates egocentrism / focalism (Table C1) | egocentrism p = .099; focalism p = .260 |  |
-| Results, Error cost & complexity | dots_c: alternative, main effect in interaction model (Take/Most rounds only) | b = 0.0015, t(245) = 0.92, p = .361 |  |
 | Results, Error cost & complexity; Results, Learning; Table C1 caption | round_num_within_c: overall error rate (Table C1) | b = -0.0086, t(245) = -6.62, p < .001 |  |
 | Results, Error cost & complexity; Results, Learning; Table C1 caption | round_num_within_c: moderates egocentrism / focalism (Table C1) | egocentrism p = .122; focalism p = .003 |  |
-| Results, Error cost & complexity | round_num_within_c: alternative, main effect in interaction model (Take/Most rounds only) | b = -0.0003, t(245) = -0.16, p = .873 |  |
 | Results, Individual differences; Table C2 caption | educ_rank_c: moderates egocentrism / focalism (Table C2) | egocentrism p = .624; focalism p = .092 |  |
 | Results, Individual differences; Table C2 caption | crt_c: moderates egocentrism / focalism (Table C2) | egocentrism p = .176; focalism p = .240 |  |
 | Results, Individual differences; Table C2 caption | numeracy_c: moderates egocentrism / focalism (Table C2) | egocentrism p = .742; focalism p = .033 |  |
