@@ -44,9 +44,7 @@ summarise_bars <- function(d, balanced = FALSE) {
     group_by(x_lab) %>%
     group_modify(\(g, k) {
       err <- estimate(g, "error", balanced)
-      lost <- estimate(g, "exp_score_lost", balanced)
-      tibble(error_rate = err[["est"]], error_lo = err[["lo"]], error_hi = err[["hi"]],
-             points_lost = lost[["est"]], lost_lo = lost[["lo"]], lost_hi = lost[["hi"]])
+      tibble(error_rate = err[["est"]], error_lo = err[["lo"]], error_hi = err[["hi"]])
     }) %>%
     ungroup()
 }
@@ -78,31 +76,24 @@ bar_theme <- theme_minimal(base_size = 12) +
     plot.margin = margin(8, 6, 0, 6)
   )
 
-bar_plot <- function(df, yvar, ylab = NULL) {
-  is_err <- yvar == "error_rate"
-  pre <- if (is_err) "error" else "lost"
+bar_plot <- function(df, ylab = NULL) {
   df <- df %>%
     arrange(x_lab != "Own", x_lab != "Focal Player's", x_lab) %>%
     mutate(x = seq_len(n()))
-  ggplot(df, aes(x = x, y = .data[[yvar]], fill = x_lab)) +
+  ggplot(df, aes(x = x, y = error_rate, fill = x_lab)) +
     geom_col(width = 0.30) +
-    geom_errorbar(aes(ymin = .data[[paste0(pre, "_lo")]], ymax = .data[[paste0(pre, "_hi")]]),
+    geom_errorbar(aes(ymin = error_lo, ymax = error_hi),
                   width = 0.05, linewidth = 0.5, color = "black") +
     scale_fill_manual(values = bar_palette) +
     scale_x_continuous(limits = c(0.55, nrow(df) + 0.45), breaks = df$x, labels = df$x_lab, expand = c(0, 0)) +
-    scale_y_continuous(breaks = if (is_err) seq(0, 1, 0.25) else c(0, 0.4, 0.8, 1.2, 1.6),
-                       labels = if (is_err) c("0.00", "0.25", "0.50", "0.75", "1.00") else c("0.00", "0.40", "0.80", "1.20", "1.60"),
-                       expand = c(0, 0)) +
-    coord_cartesian(ylim = if (is_err) c(0, 1) else c(0, 1.6), expand = FALSE, clip = "on") +
+    scale_y_continuous(breaks = seq(0, 1, 0.25), labels = c("0.00", "0.25", "0.50", "0.75", "1.00"), expand = c(0, 0)) +
+    coord_cartesian(ylim = c(0, 1), expand = FALSE, clip = "on") +
     labs(x = NULL, y = ylab) +
     bar_theme
 }
 
 three_panel_page <- function(panels, titles) {
-  cols <- imap(panels, \(p, i) arrangeGrob(
-    grobs = list(bar_plot(p, "error_rate", if (i == 1) "Error Rate"),
-                 bar_plot(p, "points_lost", if (i == 1) "Points Lost")),
-    ncol = 1))
+  cols <- imap(panels, \(p, i) ggplotGrob(bar_plot(p, if (i == 1) "Error Rate")))
   bold <- \(s, size) gpar(fontsize = size, fontface = "bold")
   heads <- unlist(map2(c("a.", "b.", "c."), titles, \(l, t) list(
     textGrob(l, x = 0.02, y = 0.95, hjust = 0, vjust = 1, gp = bold(l, 15)),
@@ -111,7 +102,7 @@ three_panel_page <- function(panels, titles) {
     grobs = c(heads, cols, list(textGrob("Score That Participant's Choice Impacts Most", gp = bold("", 14)))),
     layout_matrix = rbind(1:6, c(7, 7, 8, 8, 9, 9), rep(10, 6)),
     widths = unit(c(0.08, 1, 0.08, 1, 0.08, 1), "null"),
-    heights = unit(c(0.10, 1, 0.10), "null"),
+    heights = unit(c(0.16, 1, 0.14), "null"),
     padding = unit(0.3, "line")
   )
 }
@@ -136,7 +127,7 @@ fig3_focal <- function(df) {
 }
 
 save_grob <- function(g, file) {
-  png(file, width = 11.15, height = 6.35, units = "in", res = 300)
+  png(file, width = 11.15, height = 3.9, units = "in", res = 300)
   grid.newpage()
   grid.draw(g)
   dev.off()
