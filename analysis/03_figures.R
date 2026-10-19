@@ -294,9 +294,7 @@ satisficing_panel <- function(df, role, x_lab, tag) {
       tibble(error_rate = e[["mean"]], lo = e[["mean"]] - 1.96 * e[["se"]], hi = e[["mean"]] + 1.96 * e[["se"]], n = nrow(g))
     }) %>%
     ungroup()
-  p <- ggplot(d, aes(x = x, y = error_rate, color = line_lab))
-  if (role == "adversarial") p <- p + geom_vline(xintercept = 0, linetype = "dashed", linewidth = 0.6)
-  p +
+  ggplot(d, aes(x = x, y = error_rate, color = line_lab)) +
     geom_errorbar(aes(ymin = lo, ymax = hi), width = 0.25, linewidth = 0.5, na.rm = TRUE, position = position_dodge(0.35)) +
     geom_point(aes(size = n), alpha = 0.75, position = position_dodge(0.35)) +
     scale_color_manual(values = line_palette, breaks = line_levels[1:2]) +
