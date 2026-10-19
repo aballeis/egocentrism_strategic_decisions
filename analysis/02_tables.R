@@ -299,6 +299,81 @@ for (dv in c("payoff_optimizer", "own_score_optimizer")) {
                   stats_rows = row("Observations", rep(fmt_int(nrow(hetero_classif)), length(models))))
 }
 
+# ---- Error rates by cell of the design ----
+
+cells <- to_analyze %>%
+  filter(category %in% c("ego_opt", "other_opt")) %>%
+  group_by(draw_mode, action_game_type) %>%
+  summarise(n = n_distinct(subject_id),
+            most = mean(error[category == "ego_opt"]),
+            least = mean(error[category == "other_opt"]), .groups = "drop") %>%
+  arrange(draw_mode, action_game_type)
+
+writeLines(c(
+  "\\begingroup", "\\centering",
+  "\\begin{tabular*}{\\linewidth}{@{\\extracolsep{\\fill}}llcccc}",
+  "   \\toprule",
+  "   Framing & Role & Most & Least & Least $-$ Most & Participants\\\\",
+  "   \\midrule",
+  pmap_chr(cells, \(draw_mode, action_game_type, n, most, least) row(
+    str_to_title(as.character(draw_mode)), c(str_to_title(as.character(action_game_type)), fmt_num(most), fmt_num(least), fmt_num(least - most), fmt_int(n)))),
+  "   \\bottomrule", "\\end{tabular*}", "\\par\\endgroup"
+), file.path(main_dir, "tab_cell_errors.tex"))
+mirror(file.path(main_dir, "tab_cell_errors.tex"))
+
+# ---- Heterogeneity within Adversarial and Cooperative rounds ----
+
+fmt_p <- \(p) if (p < .001) "<.001" else strip_zero(sprintf("%.3f", p))
+n_pct <- \(x) sprintf("%d (%d\\%%)", sum(x), round(100 * mean(x)))
+
+role_subj <- to_analyze %>%
+  filter(category %in% c("ego_opt", "other_opt")) %>%
+  mutate(own = (category == "ego_opt") == (error == 0)) %>%
+  group_by(subject_id, draw_mode, action_game_type) %>%
+  summarise(own = sum(own), n = n(), .groups = "drop") %>%
+  mutate(comp = n - own)
+
+role_cells <- role_subj %>%
+  group_by(action_game_type, draw_mode) %>%
+  summarise(own_half = n_pct(own > 6), comp_half = n_pct(comp > 6),
+            own_cons = n_pct(own >= 10), comp_cons = n_pct(comp >= 10), .groups = "drop") %>%
+  arrange(action_game_type, draw_mode)
+
+role_tests <- map(c("adversarial", "cooperative"), \(r) {
+  k <- role_subj %>% filter(action_game_type == r) %>%
+    group_by(draw_mode) %>% summarise(own = sum(own >= 10), comp = sum(comp >= 10)) %>%
+    column_to_rownames("draw_mode")
+  test <- \(a, b) sprintf("%d vs.\\ %d, $p$ %s", a, b, if (a + b == 0) "= 1" else {
+    p <- binom.test(a, a + b)$p.value
+    if (p < .001) "< .001" else paste("=", fmt_p(p))
+  })
+  c(test(k["take", "own"], k["take", "comp"]),
+    test(sum(k$own), sum(k$comp)),
+    test(k["take", "own"] + k["give", "comp"], k["take", "comp"] + k["give", "own"]))
+})
+
+writeLines(c(
+  "\\begingroup", "\\centering",
+  "\\begin{tabular*}{\\linewidth}{@{\\extracolsep{\\fill}}llcccc}",
+  "   \\toprule",
+  "   & & \\multicolumn{2}{c}{More than 6 of 12 rounds} & \\multicolumn{2}{c}{At least 10 of 12 rounds}\\\\",
+  "   \\cmidrule(lr){3-4}\\cmidrule(lr){5-6}",
+  "   Role & Framing & Own score & Computer's score & Own score & Computer's score\\\\",
+  "   \\midrule",
+  pmap_chr(role_cells, \(action_game_type, draw_mode, own_half, comp_half, own_cons, comp_cons) row(
+    str_to_title(as.character(action_game_type)), c(str_to_title(as.character(draw_mode)), own_half, comp_half, own_cons, comp_cons))),
+  "   \\bottomrule", "\\end{tabular*}", "\\par\\medskip",
+  "\\begin{tabular*}{\\linewidth}{@{\\extracolsep{\\fill}}lcc}",
+  "   \\toprule",
+  "   Binomial test (at least 10 of 12 rounds) & Adversarial & Cooperative\\\\",
+  "   \\midrule",
+  row("Take: own vs.\\ computer's score", c(role_tests[[1]][1], role_tests[[2]][1])),
+  row("Both framings: own vs.\\ computer's score", c(role_tests[[1]][2], role_tests[[2]][2])),
+  row("Both framings: focal vs.\\ non-focal score", c(role_tests[[1]][3], role_tests[[2]][3])),
+  "   \\bottomrule", "\\end{tabular*}", "\\par\\endgroup"
+), file.path(main_dir, "tab_hetero_roles.tex"))
+mirror(file.path(main_dir, "tab_hetero_roles.tex"))
+
 # ---- Table D1: self-reported strategic focus ----
 
 focus_labels <- c(

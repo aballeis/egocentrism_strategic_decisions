@@ -1,0 +1,25 @@
+\begingroup
+\centering
+\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}llcccc}
+   \toprule
+   & & \multicolumn{2}{c}{More than 6 of 12 rounds} & \multicolumn{2}{c}{At least 10 of 12 rounds}\\
+   \cmidrule(lr){3-4}\cmidrule(lr){5-6}
+   Role & Framing & Own score & Computer's score & Own score & Computer's score\\
+   \midrule
+   Adversarial & Take & 76 (62\%) & 15 (12\%) & 28 (23\%) & 2 (2\%)\\
+   Adversarial & Give & 39 (31\%) & 41 (33\%) & 10 (8\%) & 9 (7\%)\\
+   Cooperative & Take & 66 (54\%) & 12 (10\%) & 40 (33\%) & 1 (1\%)\\
+   Cooperative & Give & 43 (35\%) & 38 (31\%) & 16 (13\%) & 5 (4\%)\\
+   \bottomrule
+\end{tabular*}
+\par\medskip
+\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lcc}
+   \toprule
+   Binomial test (at least 10 of 12 rounds) & Adversarial & Cooperative\\
+   \midrule
+   Take: own vs.\ computer's score & 28 vs.\ 2, $p$ < .001 & 40 vs.\ 1, $p$ < .001\\
+   Both framings: own vs.\ computer's score & 38 vs.\ 11, $p$ < .001 & 56 vs.\ 6, $p$ < .001\\
+   Both framings: focal vs.\ non-focal score & 37 vs.\ 12, $p$ < .001 & 45 vs.\ 17, $p$ < .001\\
+   \bottomrule
+\end{tabular*}
+\par\endgroup
