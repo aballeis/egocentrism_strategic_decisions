@@ -93,7 +93,7 @@ triple <- lc(reg3, setNames(1, LGC))
 lost <- lc(lost1, setNames(c(1, .5), c(L, LG)))
 
 add("Main", "Intro; Results, Egocentrism; Discussion", "Egocentrism gap (Table 1 reg. 1, b1 + b3/2)", f_pp(ego), f_raw(ego))
-add("Main", "Results, Egocentrism; SI Table 3", "Points lost per round (reg. 1, b1 + b3/2)", f_pts(lost), f_raw(lost))
+add("Main", "Results, Egocentrism; SI Table 4", "Points lost per round (reg. 1, b1 + b3/2)", f_pts(lost), f_raw(lost))
 add("Main", "Results, Egocentrism", "Gap larger in Cooperative than Adversarial (Table 1 reg. 2, Least x Coop)", f_pp(coop_diff), f_raw(coop_diff))
 add("Main", "Intro; Results, Egocentrism (Fig. 2b,c)", "Egocentrism gap, Adversarial (reg. 2)", f_pp(adv_gap), f_raw(adv_gap))
 add("Main", "Intro; Results, Egocentrism (Fig. 2b,c)", "Egocentrism gap, Cooperative (reg. 2)", f_pp(coop_gap), f_raw(coop_gap))
@@ -162,6 +162,7 @@ for (role in c("adversarial", "cooperative")) {
 
 thresh_p <- 2 * pbinom(6, 24, .5)
 add("Heterogeneity", "Results, Heterogeneity p3; Methods, Heterogeneity", "Two-sided binomial p for > 17 of 24", f_p(thresh_p), sprintf("%.4f", thresh_p))
+add("Heterogeneity", "SI Table 5 caption", "Two-sided binomial p for at least 10 of 12", f_p(2 * pbinom(2, 12, .5)), sprintf("%.4f", 2 * pbinom(2, 12, .5)))
 own18 <- \(d) d$own > 17
 comp18 <- \(d) d$comp > 17
 k_take <- c(own = sum(own18(filter(all24, draw_mode == "take"))), comp = sum(comp18(filter(all24, draw_mode == "take"))))
@@ -190,10 +191,10 @@ sr_k <- function(f_take, f_give) {
 is_g <- \(g) \(d) d$group == g
 sr_ego <- c(sr_k(is_g("own"), is_g("own")), sr_k(is_g("comp"), is_g("comp")))
 sr_foc <- c(sr_k(is_g("own"), is_g("comp")), sr_k(is_g("comp"), is_g("own")))
-add("Heterogeneity", "SI Table 4 caption", "Self-report own vs computer (raw counts; weighted binomial)",
+add("Heterogeneity", "SI Table 6 caption", "Self-report own vs computer (raw counts; weighted binomial)",
     sprintf("%d vs %d, %s", sum(strat$group == "own"), sum(strat$group == "comp"), f_p(w_binom(sr_ego[1], sr_ego[2]))),
     sprintf("weighted counts %d vs %d", sr_ego[1], sr_ego[2]))
-add("Heterogeneity", "SI Table 4 caption", "Self-report focal vs non-focal (raw counts; weighted binomial)",
+add("Heterogeneity", "SI Table 6 caption", "Self-report focal vs non-focal (raw counts; weighted binomial)",
     sprintf("%d vs %d, %s", sum(strat$group == "own" & strat$draw_mode == "take") + sum(strat$group == "comp" & strat$draw_mode == "give"),
             sum(strat$group == "comp" & strat$draw_mode == "take") + sum(strat$group == "own" & strat$draw_mode == "give"),
             f_p(w_binom(sr_foc[1], sr_foc[2]))),
@@ -202,7 +203,7 @@ for (g in c("both", "own")) {
   bal <- strat %>% filter(group == g) %>% group_by(draw_mode) %>% summarise(m = mean(own / 24)) %>% pull(m) %>% mean()
   reg <- feols(I(own / 24) ~ i(group, ref = g) + draw_mode, data = strat, vcov = "hetero")
   adj <- coef(reg)[["(Intercept)"]] + coef(reg)[["draw_modetake"]] * mean(strat$draw_mode == "take")
-  add("Heterogeneity", "SI Table 4 caption",
+  add("Heterogeneity", "SI Table 6 caption",
       sprintf("Own-score pod share, self-report '%s', controlling for Take/Give", g),
       sprintf("%s (Take/Give equally weighted); %s (regression-adjusted)", f_pct(bal, 1), f_pct(adj, 1)))
 }
@@ -215,15 +216,16 @@ for (v in c("cost_c", "dots_c", "round_num_within_c")) {
   m_no <- fe_reg(as.formula(paste("error ~ category*draw_mode + action_game_type +", v, "| subject_id")))
   m_int <- fe_reg(as.formula(paste("error ~ category*draw_mode*", v, "+ action_game_type | subject_id")))
   o <- lc(m_no, setNames(1, v))
-  add("Moderation", "Results, Error cost & complexity; Results, Learning; SI Table 5 caption",
-      sprintf("%s: overall error rate (SI Table 5)", v), sprintf("b = %.4f, t(%d) = %.2f, %s", o$est, o$df, o$t, f_p(o$p)))
-  add("Moderation", "Results, Error cost & complexity; Results, Learning; SI Table 5 caption",
-      sprintf("%s: moderates egocentrism / focalism (SI Table 5)", v), sprintf("egocentrism %s; focalism %s", f_p(ego_t(m_int, v)$p), f_p(foc_t(m_int, v)$p)))
+  if (v == "cost_c") add("Moderation", "Results, Error cost & complexity", "Error cost: change in error rate per point at stake", f_pp(o, 1), f_raw(o))
+  add("Moderation", "Results, Error cost & complexity; Results, Learning; SI Table 7 caption",
+      sprintf("%s: overall error rate (SI Table 7)", v), sprintf("b = %.4f, t(%d) = %.2f, %s", o$est, o$df, o$t, f_p(o$p)))
+  add("Moderation", "Results, Error cost & complexity; Results, Learning; SI Table 7 caption",
+      sprintf("%s: moderates egocentrism / focalism (SI Table 7)", v), sprintf("egocentrism %s; focalism %s", f_p(ego_t(m_int, v)$p), f_p(foc_t(m_int, v)$p)))
 }
 for (v in c("educ_rank_c", "crt_c", "numeracy_c")) {
   m_int <- fe_reg(as.formula(paste("error ~ category*draw_mode*", v, "+ action_game_type | subject_id")))
-  add("Moderation", "Results, Individual differences; SI Table 6 caption",
-      sprintf("%s: moderates egocentrism / focalism (SI Table 6)", v), sprintf("egocentrism %s; focalism %s", f_p(ego_t(m_int, v)$p), f_p(foc_t(m_int, v)$p)))
+  add("Moderation", "Results, Individual differences; SI Table 8 caption",
+      sprintf("%s: moderates egocentrism / focalism (SI Table 8)", v), sprintf("egocentrism %s; focalism %s", f_p(ego_t(m_int, v)$p), f_p(foc_t(m_int, v)$p)))
 }
 
 ind <- participants %>%
@@ -232,7 +234,7 @@ ind <- participants %>%
 for (v in c("educ_rank_c", "crt_c", "numeracy_c")) {
   for (dv in c("payoff_optimizer", "opt_all", "lost", "own_score_optimizer")) {
     s <- lc(feols(as.formula(paste(dv, "~ draw_mode +", v)), data = ind, vcov = "hetero"), setNames(1, v))
-    add("Moderation", "Results, Individual differences; SI Tables 8, 9",
+    add("Moderation", "Results, Individual differences; SI Tables 10, 11",
         sprintf("%s predicting %s (participant level, hetero SEs)", v, dv), sprintf("b = %.3f, t(%d) = %.2f, %s", s$est, s$df, s$t, f_p(s$p)))
   }
 }
@@ -241,7 +243,7 @@ rg <- map_chr(1:6, \(g) {
   m <- fe_reg(error ~ category*draw_mode + action_game_type | subject_id, filter(to_analyze, round_grp_within == g))
   sprintf("pair %d: ego %s, focal %s", g, f_p(lc(m, setNames(c(1, .5), c(L, LG)))$p), f_p(lc(m, setNames(1, LG))$p))
 })
-add("Moderation", "Results, Learning (SI Table 10)", "Egocentrism / focalism by round pair", paste(rg, collapse = "; "))
+add("Moderation", "Results, Learning (SI Table 12)", "Egocentrism / focalism by round pair", paste(rg, collapse = "; "))
 
 fig7_n <- to_analyze %>%
   filter(!is.na(focal_works)) %>%
@@ -251,9 +253,9 @@ fig7_n <- to_analyze %>%
 add("Moderation", "Fig. 7 caption", "Point sizes (N per round number and line)", sprintf("N = %d to N = %d", min(fig7_n$n), max(fig7_n$n)))
 
 rt <- fe_reg(time_to_decide ~ category*draw_mode + action_game_type | subject_id + round_grp_number)
-add("Moderation", "Methods, Regression analyses [N]; SI Table 11", "Participants choosing the payoff-maximizing pod in all 24 rounds",
+add("Moderation", "Methods, Regression analyses [N]; SI Table 13", "Participants choosing the payoff-maximizing pod in all 24 rounds",
     sprintf("%d participants", n_distinct(to_analyze$subject_id[to_analyze$always_opt])))
-add("Moderation", "SI Table 11", "Response time, full sample: Least / Coop / Least x Give / egocentrism",
+add("Moderation", "SI Table 13", "Response time, full sample: Least / Coop / Least x Give / egocentrism",
     paste(c(f_p(lc(rt, setNames(1, L))$p), f_p(lc(rt, action_game_typecooperative = 1)$p), f_p(lc(rt, setNames(1, LG))$p),
             f_p(lc(rt, setNames(c(1, .5), c(L, LG)))$p)), collapse = " / "))
 
