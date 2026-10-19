@@ -131,6 +131,7 @@ round_data <- rounds %>%
     exp_score_lost = pmax(score_A, score_B) - exp_score,
     # Pod that maximizes the participant's own score vs. the computer's (helps/hurts it as needed)
     ego_pod = if_else(take, if_else(A1 >= B1, "A", "B"), if_else(A1 <= B1, "A", "B")),
+    exp_score_ego = if_else(ego_pod == "A", score_A, score_B),
     other_pod = if_else(take == adv, if_else(A2 >= B2, "A", "B"), if_else(A2 <= B2, "A", "B")),
     heur_ego = move1 == ego_pod,
     score_lost_not_opt = abs(if_else(ego_pod == "A", score_A, score_B) - if_else(other_pod == "A", score_A, score_B)),
@@ -151,7 +152,7 @@ round_data <- rounds %>%
   ungroup() %>%
   select(subject_id, draw_mode, action_game_type, round_number, round_grp_number, round_num_within,
          round_grp_within, A1, A2, B1, B2, move1, opt1, category, play1_opt, error, heur_ego, focal_works,
-         exp_score, exp_score_lost, score_lost_not_opt, dots_on_screen, round_payoff, time_to_decide,
+         exp_score, exp_score_lost, exp_score_ego, score_lost_not_opt, dots_on_screen, round_payoff, time_to_decide,
          always_opt, all_comps_one_try, crt, numeracy, educ_rank, strat_overall, age, gender, bonus_round,
          dots_c, cost_c, round_num_within_c, crt_c, numeracy_c, educ_rank_c) %>%
   arrange(subject_id, round_number)
