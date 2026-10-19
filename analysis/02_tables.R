@@ -186,6 +186,14 @@ for (nm in names(samps)) {
 
 main_dir <- file.path(out_dir, "main")
 
+models_lost <- list(
+  fe_reg(exp_score_lost ~ category*draw_mode + action_game_type | subject_id, to_analyze),
+  fe_reg(exp_score_lost ~ category*draw_mode + category*action_game_type | subject_id, to_analyze),
+  fe_reg(exp_score_lost ~ category*draw_mode*action_game_type | subject_id, to_analyze)
+)
+write_reg_table(models_lost, term_map_main, file.path(main_dir, "fig4_reg_lost.tex"),
+                "Dependent Var.: Points lost", note_after_stats = TRUE, stats_rows = obs_row(models_lost))
+
 # ---- Table C1: moderation by error cost, complexity, round ----
 
 term_map_mod1 <- c(
