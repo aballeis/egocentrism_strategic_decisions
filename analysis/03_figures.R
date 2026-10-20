@@ -282,7 +282,7 @@ fig6_learning <- function(df) {
     guides(color = guide_legend(nrow = 4, byrow = TRUE, override.aes = list(size = 3.0, alpha = 1)))
 }
 
-# ---- Error rate by the aggregate score from maximizing own score (Supplementary Fig. 13) ----
+# ---- Error rate by the aggregate score from maximizing own score (Fig. 6; focal version Supplementary Fig. 14) ----
 
 focal_palette <- setNames(unname(line_palette[3:4]), c("Choice Impacts Focal Score Most", "Choice Impacts Non-Focal Score Most"))
 
@@ -325,14 +325,14 @@ fig_satisficing_focal <- function(df) {
 }
 
 # ---- Write figures ----
-# File names match the draft's Overleaf: fig6_dots_dist = Figure 4, fig7_learn = Figure 6.
+# File names match the draft's Overleaf: fig6_dots_dist = Fig. 5, fig_satisficing = Fig. 6, fig7_learn = Supplementary Fig. 13.
 
 samps <- list(
   main          = to_analyze,
-  pass_comps    = to_analyze %>% filter(all_comps_one_try),                       # Appendix A
-  exclude_early = to_analyze %>% filter(!round_number %in% c(1, 2, 13, 14)),      # Appendix B
-  adv_only      = to_analyze %>% filter(action_game_type == "adversarial"),       # Appendix D
-  coop_only     = to_analyze %>% filter(action_game_type == "cooperative")        # Appendix D
+  pass_comps    = to_analyze %>% filter(all_comps_one_try),                       # Supplementary Section 1
+  exclude_early = to_analyze %>% filter(!round_number %in% c(1, 2, 13, 14)),      # Supplementary Section 2
+  adv_only      = to_analyze %>% filter(action_game_type == "adversarial"),       # Supplementary Section 5
+  coop_only     = to_analyze %>% filter(action_game_type == "cooperative")        # Supplementary Section 5
 )
 
 save_gg <- function(p, file, w, h) {
