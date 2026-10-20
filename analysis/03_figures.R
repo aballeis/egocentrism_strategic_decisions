@@ -284,11 +284,15 @@ fig6_learning <- function(df) {
 
 # ---- Error rate by the aggregate score from maximizing own score (Supplementary Fig. 13) ----
 
-satisficing_panel <- function(df, role, x_lab, tag) {
+focal_palette <- setNames(unname(line_palette[3:4]), c("Choice Impacts Focal Score Most", "Choice Impacts Non-Focal Score Most"))
+
+satisficing_panel <- function(df, role, x_lab, tag, xvar = "exp_score_ego", focal = FALSE) {
+  pal <- if (focal) focal_palette else line_palette[1:2]
   d <- df %>%
     filter(action_game_type == role, category %in% c("ego_opt", "other_opt")) %>%
-    mutate(line_lab = factor(if_else(category == "ego_opt", line_levels[1], line_levels[2]), levels = line_levels[1:2])) %>%
-    group_by(x = exp_score_ego, line_lab) %>%
+    mutate(line_lab = factor(if (focal) if_else(focal_works, names(pal)[1], names(pal)[2])
+                             else if_else(category == "ego_opt", names(pal)[1], names(pal)[2]), levels = names(pal))) %>%
+    group_by(x = .data[[xvar]], line_lab) %>%
     group_modify(\(g, k) {
       e <- cluster_mean_se(g, "error")
       tibble(error_rate = e[["mean"]], lo = e[["mean"]] - 1.96 * e[["se"]], hi = e[["mean"]] + 1.96 * e[["se"]], n = nrow(g))
@@ -297,7 +301,7 @@ satisficing_panel <- function(df, role, x_lab, tag) {
   ggplot(d, aes(x = x, y = error_rate, color = line_lab)) +
     geom_errorbar(aes(ymin = lo, ymax = hi), width = 0.25, linewidth = 0.5, na.rm = TRUE, position = position_dodge(0.35)) +
     geom_point(aes(size = n), alpha = 0.75, position = position_dodge(0.35)) +
-    scale_color_manual(values = line_palette, breaks = line_levels[1:2]) +
+    scale_color_manual(values = pal, breaks = names(pal)) +
     scale_size_area(max_size = 3, guide = "none") +
     scale_x_continuous(breaks = scales::breaks_width(2), expand = c(0.03, 0.03)) +
     scale_y_continuous(breaks = seq(0, 1, 0.25), labels = c("0.00", "0.25", "0.50", "0.75", "1.00"), expand = c(0, 0)) +
@@ -311,6 +315,12 @@ satisficing_panel <- function(df, role, x_lab, tag) {
 fig_satisficing <- function(df) {
   (satisficing_panel(df, "adversarial", "Score Difference if Own Score Is Maximized", "a") +
      satisficing_panel(df, "cooperative", "Score Sum if Own Score Is Maximized", "b")) +
+    plot_layout(ncol = 2, guides = "collect") & theme(legend.position = "bottom")
+}
+
+fig_satisficing_focal <- function(df) {
+  (satisficing_panel(df, "adversarial", "Score Difference if Focal Score Is Optimized", "a", "exp_score_focal", TRUE) +
+     satisficing_panel(df, "cooperative", "Score Sum if Focal Score Is Optimized", "b", "exp_score_focal", TRUE)) +
     plot_layout(ncol = 2, guides = "collect") & theme(legend.position = "bottom")
 }
 
@@ -342,4 +352,5 @@ for (nm in names(samps)) {
   }
   save_gg(fig5_hetero(df), file.path(dir, "fig5_hetero.png"), 13.2, 5.1)
   if (nm == "main") save_gg(fig_satisficing(df), file.path(dir, "fig_satisficing.png"), 9.8, 3.8)
+  if (nm == "main") save_gg(fig_satisficing_focal(df), file.path(dir, "fig_satisficing_focal.png"), 9.8, 3.8)
 }
