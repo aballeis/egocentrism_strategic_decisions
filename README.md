@@ -1,13 +1,12 @@
 # Egocentrism in Strategic Decisions
 
-Research code, data, and materials. Participants completed a Qualtrics survey with the Pods-and-Dots game (`interface/`) embedded in an iframe, so the game data exists in two places: the game's own database, and a copy that the game passed back to Qualtrics. `analysis/01_build.R` merges them. Both data files are restricted to the 246 participants in the analysis sample.
+Research code, data, and materials. Participants completed a Qualtrics survey with the Pods-and-Dots game (`interface/`) embedded in an iframe, and the game passed a JSON log of each participant's rounds back to Qualtrics. `analysis/01_build.R` builds the analysis data from that log. The data file is restricted to the 246 participants in the analysis sample.
 
 The manuscript is in preparation and is not included.
 
 ```
 data/
   qualtrics_data.csv       survey responses + game log (participant IDs replaced with random IDs)
-  fly_app_data.sqlite      database written by the game
 analysis/                  run from the repo root, in order
   01_build.R               -> data/built/round_level_data.csv, participant_level_data.csv
   02_tables.R              LaTeX tables
@@ -26,11 +25,11 @@ interface/                 the game (Flask)
 
 Tested with these versions:
 
-- **R 4.5.2**, with packages tidyverse 2.0.0, fixest 0.13.2, DBI 1.2.3, RSQLite 2.4.5, janitor 2.2.1, jsonlite 2.0.0, gridExtra 2.3, patchwork 1.3.2
+- **R 4.5.2**, with packages tidyverse 2.0.0, fixest 0.13.2, janitor 2.2.1, jsonlite 2.0.0, gridExtra 2.3, patchwork 1.3.2
 - **Python 3.14**, with matplotlib 3.10.8 (Figure 1) and Flask 3.1.2 (the game; `interface/requirements.txt`)
 
 ```
-install.packages(c("tidyverse", "fixest", "DBI", "RSQLite", "janitor", "jsonlite", "gridExtra", "patchwork"))
+install.packages(c("tidyverse", "fixest", "janitor", "jsonlite", "gridExtra", "patchwork"))
 pip install matplotlib -r interface/requirements.txt
 ```
 
