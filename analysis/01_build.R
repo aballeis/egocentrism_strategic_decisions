@@ -1,12 +1,9 @@
 library(tidyverse)
-library(DBI)
-library(RSQLite)
 library(janitor)
 library(jsonlite)
 
-# Game data was recorded twice: by the game app and as a JSON log
-# passed back to Qualtrics. For each participant, use the Qualtrics log if it has all 24 rounds,
-# otherwise the app database if it does; otherwise drop the participant.
+# Game data come from the JSON log that the game passed back to Qualtrics.
+# Participants whose log does not contain all 24 rounds are dropped.
 
 dir.create("data/built", showWarnings = FALSE)
 tz <- "America/New_York"
@@ -16,17 +13,7 @@ qualtrics <- read_csv("data/qualtrics_data.csv", show_col_types = FALSE) %>%
   clean_names() %>%
   slice(-c(1, 2))  # Qualtrics label rows
 
-con <- dbConnect(SQLite(), "data/fly_app_data.sqlite")
-subjects <- dbGetQuery(con, "SELECT * FROM subjects")
-actions  <- dbGetQuery(con, "SELECT * FROM game_actions") %>% distinct()
-dbDisconnect(con)
-
-# ---- Round-level game data from each source ----
-
-app_rounds <- subjects %>%
-  select(subject_id, qualtrics_id, condition) %>%
-  left_join(actions, by = c("subject_id", "condition" = "action_condition")) %>%
-  mutate(source = "app")
+# ---- Round-level game data ----
 
 parse_game_log <- function(json) {
   x <- tryCatch(fromJSON(json), error = function(e) NULL)
@@ -34,35 +21,19 @@ parse_game_log <- function(json) {
   as_tibble(x)
 }
 
-qual_rounds <- qualtrics %>%
-  transmute(qualtrics_id = response_id, log = map(game_log_json, parse_game_log)) %>%
-  unnest(log) %>%
-  mutate(source = "qualtrics")
-
 game_cols <- c("subject_id", "qualtrics_id", "action_game_type", "draw_is_take", "draw_mode",
                "round_number", "round_grp_number", "round_start_time", "timestamp1", "move1",
                "round_payoff", "A1", "A2", "B1", "B2",
                "category_adv_take", "category_adv_give", "category_coop_take", "category_coop_give")
 
-rounds <- bind_rows(
-  app_rounds  %>% select(all_of(game_cols), source) %>% mutate(across(everything(), as.character)),
-  qual_rounds %>% select(all_of(game_cols), source) %>% mutate(across(everything(), as.character))
-)
-
-source_choice <- rounds %>%
+rounds <- qualtrics %>%
+  transmute(qualtrics_id = response_id, log = map(game_log_json, parse_game_log)) %>%
+  unnest(log) %>%
+  select(all_of(game_cols)) %>%
+  mutate(across(everything(), as.character)) %>%
   group_by(qualtrics_id) %>%
-  summarise(
-    subject_id = first(na.omit(subject_id[order(source != "app")])),
-    source = case_when(
-      sum(source == "qualtrics" & !is.na(round_number)) == 24 ~ "qualtrics",
-      sum(source == "app" & !is.na(round_number)) == 24 ~ "app",
-      TRUE ~ NA_character_
-    )
-  ) %>%
-  filter(!is.na(source))
-
-rounds <- rounds %>%
-  semi_join(source_choice, by = c("qualtrics_id", "subject_id", "source")) %>%
+  filter(sum(!is.na(round_number)) == 24, subject_id %in% first(na.omit(subject_id))) %>%
+  ungroup() %>%
   type_convert(col_types = cols(.default = col_guess(), move1 = col_character(),
                                 round_start_time = col_character(), timestamp1 = col_character()))
 
@@ -91,15 +62,8 @@ survey <- qualtrics %>%
     gender,
     bonus_round = as.integer(round_implemented)
   ) %>%
-  unnest_wider(quiz)
-
-# Fall back to the app's record of comprehension-check attempts if Qualtrics is missing it
-survey <- survey %>%
-  left_join(subjects %>% distinct(qualtrics_id, app_q1 = quiz_attempts, app_q2 = quiz2_attempts), by = "qualtrics_id") %>%
-  mutate(quiz_attempts = coalesce(quiz_attempts, as.integer(app_q1)),
-         quiz2_attempts = coalesce(quiz2_attempts, as.integer(app_q2)),
-         all_comps_one_try = quiz_attempts + quiz2_attempts == 2) %>%
-  select(-app_q1, -app_q2)
+  unnest_wider(quiz) %>%
+  mutate(all_comps_one_try = quiz_attempts + quiz2_attempts == 2)
 
 # ---- Analysis variables ----
 
