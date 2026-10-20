@@ -250,7 +250,7 @@ fig7_n <- to_analyze %>%
   transmute(x = round_num_within, cat = category, sal = focal_works) %>%
   pivot_longer(c(cat, sal), values_transform = as.character) %>%
   count(x, name, value)
-add("Moderation", "Fig. 7 caption", "Point sizes (N per round number and line)", sprintf("N = %d to N = %d", min(fig7_n$n), max(fig7_n$n)))
+add("Moderation", "Supp. Fig. 13 caption", "Point sizes (N per round number and line)", sprintf("N = %d to N = %d", min(fig7_n$n), max(fig7_n$n)))
 
 rt <- fe_reg(time_to_decide ~ category*draw_mode + action_game_type | subject_id + round_grp_number)
 add("Moderation", "Methods, Regression analyses [N]; SI Table 13", "Participants choosing the payoff-maximizing pod in all 24 rounds",

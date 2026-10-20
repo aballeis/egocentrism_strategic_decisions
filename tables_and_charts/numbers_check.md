@@ -88,7 +88,7 @@ Linear combinations use t(clusters - 1); round-level models cluster by subject_i
 | Results, Individual differences; SI Tables 10, 11 | numeracy_c predicting lost (participant level, hetero SEs) | b = -2.340, t(243) = -2.98, p = .003 |  |
 | Results, Individual differences; SI Tables 10, 11 | numeracy_c predicting own_score_optimizer (participant level, hetero SEs) | b = -0.028, t(243) = -0.97, p = .332 |  |
 | Results, Learning (SI Table 12) | Egocentrism / focalism by round pair | pair 1: ego p < .001, focal p < .001; pair 2: ego p < .001, focal p < .001; pair 3: ego p < .001, focal p < .001; pair 4: ego p < .001, focal p = .002; pair 5: ego p < .001, focal p < .001; pair 6: ego p < .001, focal p < .001 |  |
-| Fig. 7 caption | Point sizes (N per round number and line) | N = 230 to N = 262 |  |
+| Supp. Fig. 13 caption | Point sizes (N per round number and line) | N = 230 to N = 262 |  |
 | Methods, Regression analyses [N]; SI Table 13 | Participants choosing the payoff-maximizing pod in all 24 rounds | 33 participants |  |
 | SI Table 13 | Response time, full sample: Least / Coop / Least x Give / egocentrism | p = .154 / p < .001 / p = .604 / p = .272 |  |
 
