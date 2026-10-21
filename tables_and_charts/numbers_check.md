@@ -9,6 +9,8 @@ Linear combinations use t(clusters - 1); round-level models cluster by subject_i
 |---|---|---|---|
 | Intro; Results opening; Discussion | Participants / decisions / rounds each | 246 participants, 5,904 decisions, 24 rounds |  |
 | Results opening; SI Section 1 title and captions | Passed all comprehension checks on first try | 58.1% (143 participants) |  |
+| Fig. 2 caption; Supp. Fig. 6 caption | Participants per framing condition, full sample | Take N = 122, Give N = 124 |  |
+| Supp. Fig. 1 caption | Participants per framing condition, passed comprehension checks | Take N = 69, Give N = 74 |  |
 | Methods, Participants | Participants per cell (framing x first role) | take/adversarial-first = 62; take/cooperative-first = 60; give/adversarial-first = 63; give/cooperative-first = 61 |  |
 | Methods, Participants | Gender | 54% male, 44% female, 3 not reported |  |
 | Methods, Participants | Age range (mean) | 23 to 77 (mean = 44) |  |
