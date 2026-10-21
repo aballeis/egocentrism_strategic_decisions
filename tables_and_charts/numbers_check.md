@@ -26,6 +26,8 @@ Linear combinations use t(clusters - 1); round-level models cluster by subject_i
 | Intro; Results, Egocentrism (Fig. 2b,c) | Egocentrism gap, Adversarial (reg. 2) | 14 pp (95% CI [9, 19], t(245) = 5.77, p < .001) | est = 0.1406, SE = 0.0244 |
 | Intro; Results, Egocentrism (Fig. 2b,c) | Egocentrism gap, Cooperative (reg. 2) | 19 pp (95% CI [14, 25], t(245) = 7.26, p < .001) | est = 0.1928, SE = 0.0266 |
 | Results, Focalism (Fig. 3a) | Focal vs non-focal error rate | -13 pp (95% CI [-18, -9], t(245) = -5.88, p < .001) | est = -0.1318, SE = 0.0224 |
+| Results, Evidence of focalism | Non-focal minus focal error rate (Take-Least, Give-Most vs Take-Most, Give-Least) | 13 pp (95% CI [9, 18], t(245) = 5.88, p < .001) | est = 0.1318, SE = 0.0224 |
+| Results, Evidence of focalism | Non-focal minus focal points lost per round | 0.303 points (95% CI [0.20, 0.41], t(245) = 5.70, p < .001) | est = 0.3032, SE = 0.0532 |
 | Table 2 caption; Results, Focalism | Focalism test (reg. 1, b3) | -27 pp (95% CI [-34, -19], t(245) = -6.75, p < .001) | est = -0.2663, SE = 0.0394 |
 | Table 2 caption | Egocentrism test p-value (reg. 1) | p < .001 |  |
 | Intro; Results, Focalism (Fig. 3b) | Take gap (reg. 1, b1) | 30 pp (95% CI [24, 36], t(245) = 10.25, p < .001) | est = 0.2999, SE = 0.0292 |

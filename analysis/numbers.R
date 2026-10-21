@@ -80,6 +80,7 @@ reg2 <- fe_reg(error ~ category*draw_mode + category*action_game_type | subject_
 reg3 <- fe_reg(error ~ category*draw_mode*action_game_type | subject_id)
 lost1 <- fe_reg(exp_score_lost ~ category*draw_mode + action_game_type | subject_id)
 foc <- fe_reg(error ~ focal_works + action_game_type | subject_id)
+foc_lost <- fe_reg(exp_score_lost ~ focal_works + action_game_type | subject_id)
 
 ego <- lc(reg1, setNames(c(1, .5), c(L, LG)))
 take_gap <- lc(reg1, setNames(1, L))
@@ -98,6 +99,8 @@ add("Main", "Results, Egocentrism", "Gap larger in Cooperative than Adversarial 
 add("Main", "Intro; Results, Egocentrism (Fig. 2b,c)", "Egocentrism gap, Adversarial (reg. 2)", f_pp(adv_gap), f_raw(adv_gap))
 add("Main", "Intro; Results, Egocentrism (Fig. 2b,c)", "Egocentrism gap, Cooperative (reg. 2)", f_pp(coop_gap), f_raw(coop_gap))
 add("Main", "Results, Focalism (Fig. 3a)", "Focal vs non-focal error rate", f_pp(foc_fw), f_raw(foc_fw))
+add("Main", "Results, Evidence of focalism", "Non-focal minus focal error rate (Take-Least, Give-Most vs Take-Most, Give-Least)", f_pp(lc(foc, focal_works = -1)), f_raw(lc(foc, focal_works = -1)))
+add("Main", "Results, Evidence of focalism", "Non-focal minus focal points lost per round", f_pts(lc(foc_lost, focal_works = -1)), f_raw(lc(foc_lost, focal_works = -1)))
 add("Main", "Table 2 caption; Results, Focalism", "Focalism test (reg. 1, b3)", f_pp(focal_b3), f_raw(focal_b3))
 add("Main", "Table 2 caption", "Egocentrism test p-value (reg. 1)", f_p(ego$p))
 add("Main", "Intro; Results, Focalism (Fig. 3b)", "Take gap (reg. 1, b1)", f_pp(take_gap), f_raw(take_gap))
