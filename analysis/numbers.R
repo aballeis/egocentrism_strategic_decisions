@@ -52,6 +52,9 @@ add("Sample", "Intro; Results opening; Discussion", "Participants / decisions / 
     sprintf("%d participants, %s decisions, %d rounds", n_subj, f_int(nrow(to_analyze)), nrow(to_analyze) / n_subj))
 add("Sample", "Results opening; SI Section 1 title and captions", "Passed all comprehension checks on first try",
     sprintf("%s (%d participants)", f_pct(mean(participants$all_comps_one_try), 1), sum(participants$all_comps_one_try)))
+n_cond <- \(df) df %>% distinct(subject_id, draw_mode) %>% count(draw_mode) %>% deframe()
+add("Sample", "Fig. 2 caption; Supp. Fig. 6 caption", "Participants per framing condition, full sample", sprintf("Take N = %d, Give N = %d", n_cond(participants)[["take"]], n_cond(participants)[["give"]]))
+add("Sample", "Supp. Fig. 1 caption", "Participants per framing condition, passed comprehension checks", sprintf("Take N = %d, Give N = %d", n_cond(filter(participants, all_comps_one_try))[["take"]], n_cond(filter(participants, all_comps_one_try))[["give"]]))
 add("Sample", "Methods, Participants", "Participants per cell (framing x first role)",
     paste(sprintf("%s/%s-first = %d", first_role$draw_mode, first_role$action_game_type, first_role$n), collapse = "; "))
 add("Sample", "Methods, Participants", "Gender",
