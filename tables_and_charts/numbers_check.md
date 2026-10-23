@@ -13,29 +13,30 @@ Linear combinations use t(clusters - 1); round-level models cluster by subject_i
 | Supp. Fig. 1 caption | Participants per framing condition, passed comprehension checks | Take N = 69, Give N = 74 |  |
 | Methods, Participants | Participants per cell (framing x first role) | take/adversarial-first = 62; take/cooperative-first = 60; give/adversarial-first = 63; give/cooperative-first = 61 |  |
 | Methods, Participants | Gender | 54% male, 44% female, 3 not reported |  |
+| Methods, Participants | Race/ethnicity | White / Caucasian 75%; Black / African-American 11%; Asian / Asian-American 9%; Latino / Hispanic 4%; Multiple, mixed, or other 2% | White / Caucasian = 184; Black / African-American = 26; Asian / Asian-American = 21; Latino / Hispanic = 9; Multiple, mixed, or other = 6 |
 | Methods, Participants | Age range (mean) | 23 to 77 (mean = 44) |  |
 | Methods, Incentives | Bonus range (mean) | $0.40 to $1.60 (mean = $1.04) |  |
 | Methods, Participants | Consented / returned / incomplete (294 / 34 / 14) | Not computable from the replication data (Prolific records) |  |
-| Methods, Stimuli | Most stimuli per pool (range) | 481 to 524 of 1000 | take_adv = 524; give_adv = 519; take_coop = 488; give_coop = 481 |
+| Methods, Generation of Pods-and-Dots stimuli | Most stimuli per pool (range) | 481 to 524 of 1000 | take_adv = 524; give_adv = 519; take_coop = 488; give_coop = 481 |
 
 ## Main
 
 | Location | Statistic | Value | Unrounded |
 |---|---|---|---|
 | Intro; Results, Egocentrism; Discussion | Egocentrism gap (Table 1 reg. 1, b1 + b3/2) | 17 pp (95% CI [13, 21], t(245) = 8.46, p < .001) | est = 0.1667, SE = 0.0197 |
-| Results, Egocentrism; SI Table 4 | Points lost per round (reg. 1, b1 + b3/2) | 0.357 points (95% CI [0.26, 0.45], t(245) = 7.43, p < .001) | est = 0.3572, SE = 0.0481 |
+| Results, Egocentrism; SI Table 4 | Points lost per round (reg. 1, b1 + b3/2) | 0.36 points (95% CI [0.26, 0.45], t(245) = 7.43, p < .001) | est = 0.3572, SE = 0.0481 |
 | Results, Egocentrism | Gap larger in Cooperative than Adversarial (Table 1 reg. 2, Least x Coop) | 5 pp (95% CI [-1, 12], t(245) = 1.62, p = .107) | est = 0.0522, SE = 0.0323 |
 | Intro; Results, Egocentrism (Fig. 2b,c) | Egocentrism gap, Adversarial (reg. 2) | 14 pp (95% CI [9, 19], t(245) = 5.77, p < .001) | est = 0.1406, SE = 0.0244 |
 | Intro; Results, Egocentrism (Fig. 2b,c) | Egocentrism gap, Cooperative (reg. 2) | 19 pp (95% CI [14, 25], t(245) = 7.26, p < .001) | est = 0.1928, SE = 0.0266 |
 | Results, Focalism (Fig. 3a) | Focal vs non-focal error rate | -13 pp (95% CI [-18, -9], t(245) = -5.88, p < .001) | est = -0.1318, SE = 0.0224 |
 | Results, Evidence of focalism | Non-focal minus focal error rate (Take-Least, Give-Most vs Take-Most, Give-Least) | 13 pp (95% CI [9, 18], t(245) = 5.88, p < .001) | est = 0.1318, SE = 0.0224 |
-| Results, Evidence of focalism | Non-focal minus focal points lost per round | 0.303 points (95% CI [0.20, 0.41], t(245) = 5.70, p < .001) | est = 0.3032, SE = 0.0532 |
+| Results, Evidence of focalism | Non-focal minus focal points lost per round | 0.30 points (95% CI [0.20, 0.41], t(245) = 5.70, p < .001) | est = 0.3032, SE = 0.0532 |
 | Table 2 caption; Results, Focalism | Focalism test (reg. 1, b3) | -27 pp (95% CI [-34, -19], t(245) = -6.75, p < .001) | est = -0.2663, SE = 0.0394 |
 | Table 2 caption | Egocentrism test p-value (reg. 1) | p < .001 |  |
 | Intro; Results, Focalism (Fig. 3b) | Take gap (reg. 1, b1) | 30 pp (95% CI [24, 36], t(245) = 10.25, p < .001) | est = 0.2999, SE = 0.0292 |
-| Intro; Results, Focalism (Fig. 3c) [X]; Discussion | Give gap (reg. 1, b1 + b3) | 3 pp (95% CI [-2, 9], t(245) = 1.27, p = .205) | est = 0.0336, SE = 0.0264 |
-| Results, Focalism [X] | Overall error rate, Give / Take | Give 24.5%, Take 24.8% | Give = 0.2446, Take = 0.2483 |
-| Results, Focalism [X] | Overall error rate, Give - Take (round level, clustered by subject) | -0.4 pp (95% CI [-4.9, 4.2], t(245) = -0.16, p = .873) | est = -0.0037, SE = 0.0230 |
+| Intro; Results, Focalism (Fig. 3c); Discussion | Give gap (reg. 1, b1 + b3) | 3 pp (95% CI [-2, 9], t(245) = 1.27, p = .205) | est = 0.0336, SE = 0.0264 |
+| Results, Focalism | Overall error rate, Give / Take | Give 24.5%, Take 24.8% | Give = 0.2446, Take = 0.2483 |
+| Results, Focalism | Overall error rate, Give - Take (round level, clustered by subject) | -0.4 pp (95% CI [-4.9, 4.2], t(245) = -0.16, p = .873) | est = -0.0037, SE = 0.0230 |
 | Results, Focalism | Give framing effect on gap, Coop vs Adv (Table 1 reg. 3, b6) | 1 pp (95% CI [-11, 14], t(245) = 0.22, p = .828) | est = 0.0141, SE = 0.0645 |
 | Methods, Regression analyses (order test) | Least x CoopFirst (gamma2) | 7.9 pp (95% CI [-0.5, 16.3], t(245) = 1.86, p = .065) | est = 0.0793, SE = 0.0427 |
 
@@ -93,8 +94,15 @@ Linear combinations use t(clusters - 1); round-level models cluster by subject_i
 | Results, Individual differences; SI Tables 10, 11 | numeracy_c predicting own_score_optimizer (participant level, hetero SEs) | b = -0.028, t(243) = -0.97, p = .332 |  |
 | Results, Learning (SI Table 12) | Egocentrism / focalism by round pair | pair 1: ego p < .001, focal p < .001; pair 2: ego p < .001, focal p < .001; pair 3: ego p < .001, focal p < .001; pair 4: ego p < .001, focal p = .002; pair 5: ego p < .001, focal p < .001; pair 6: ego p < .001, focal p < .001 |  |
 | Supp. Fig. 13 caption | Point sizes (N per round number and line) | N = 230 to N = 262 |  |
-| Methods, Regression analyses [N]; SI Table 13 | Participants choosing the payoff-maximizing pod in all 24 rounds | 33 participants |  |
+| Methods, Regression analyses; SI Table 13 | Participants choosing the payoff-maximizing pod in all 24 rounds | 33 participants |  |
 | SI Table 13 | Response time, full sample: Least / Coop / Least x Give / egocentrism | p = .154 / p < .001 / p = .604 / p = .272 |  |
+
+## Satisficing
+
+| Location | Statistic | Value | Unrounded |
+|---|---|---|---|
+| Results, Satisficing; Methods, Regression analyses | Response time, Adversarial, own-score difference positive vs negative (participant + round-block FE) | 1.2 seconds faster (6.4 vs. 7.6 seconds, 95% CI [0.56, 1.83], t(245) = 3.71, p < .001) | est = 1.1973, SE = 0.3224 |
+| Methods, Regression analyses | Response time, unadjusted means (positive vs negative) | 6.3 vs. 7.7 seconds |  |
 
 ## Robustness
 
@@ -117,7 +125,7 @@ Linear combinations use t(clusters - 1); round-level models cluster by subject_i
 
 | Location | Statistic | Value | Unrounded |
 |---|---|---|---|
-| Methods, Sensitivity [X] | MDE egocentrism (2.8 x SE, reg. 1) | 5.5 pp | SE = 0.0197 |
-| Methods, Sensitivity [X] | MDE focalism, focal vs non-focal scale (2.8 x SE) | 6.3 pp | SE = 0.0224 |
-| Methods, Sensitivity [X] | MDE Adv vs Coop gap difference (2.8 x SE, reg. 2) | 9.0 pp | SE = 0.0323 |
+| Methods, Sample size | MDE egocentrism (2.8 x SE, reg. 1) | 5.5 pp | SE = 0.0197 |
+| Methods, Sample size | MDE focalism, focal vs non-focal scale (2.8 x SE) | 6.3 pp | SE = 0.0224 |
+| Methods, Sample size | MDE Adv vs Coop gap difference (2.8 x SE, reg. 2) | 9.0 pp | SE = 0.0323 |
 
