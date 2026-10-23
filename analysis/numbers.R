@@ -36,7 +36,7 @@ f_pct <- \(x, d = 0) paste0(formatC(100 * x, format = "f", digits = d), "%")
 f_int <- \(x) format(x, big.mark = ",", trim = TRUE)
 f_pp <- \(s, d = 0) sprintf(sprintf("%%.%1$df pp (95%%%% CI [%%.%1$df, %%.%1$df], t(%%d) = %%.2f, %%s)", d),
                             100 * s$est, 100 * s$lo, 100 * s$hi, s$df, s$t, f_p(s$p))
-f_pts <- \(s) sprintf("%.3f points (95%% CI [%.2f, %.2f], t(%d) = %.2f, %s)", s$est, s$lo, s$hi, s$df, s$t, f_p(s$p))
+f_pts <- \(s) sprintf("%.2f points (95%% CI [%.2f, %.2f], t(%d) = %.2f, %s)", s$est, s$lo, s$hi, s$df, s$t, f_p(s$p))
 f_raw <- \(s) sprintf("est = %.4f, SE = %.4f", s$est, s$se)
 
 rows <- list()
@@ -60,6 +60,12 @@ add("Sample", "Methods, Participants", "Participants per cell (framing x first r
 add("Sample", "Methods, Participants", "Gender",
     sprintf("%s male, %s female, %d not reported", f_pct(mean(participants$gender == "Male")),
             f_pct(mean(participants$gender == "Female")), sum(!participants$gender %in% c("Male", "Female"))))
+race <- participants %>%
+  mutate(race = if_else(race %in% c("Multiple / mixed-race", "Other"), "Multiple, mixed, or other", race)) %>%
+  count(race, sort = TRUE)
+add("Sample", "Methods, Participants", "Race/ethnicity",
+    paste(sprintf("%s %s", race$race, f_pct(race$n / sum(race$n))), collapse = "; "),
+    paste(sprintf("%s = %d", race$race, race$n), collapse = "; "))
 add("Sample", "Methods, Participants", "Age range (mean)",
     sprintf("%.0f to %.0f (mean = %.0f)", min(participants$age), max(participants$age), mean(participants$age)))
 add("Sample", "Methods, Incentives", "Bonus range (mean)",
@@ -72,7 +78,7 @@ pools <- map_dfr(c("take_adv", "give_adv", "take_coop", "give_coop"), \(p) {
   read_csv(file.path("interface/stimuli", paste0("draft_sample2_", p, ".csv")), show_col_types = FALSE) %>%
     summarise(pool = p, n = n(), most = sum(.data[[paste0("category_", parts[2], "_", parts[1])]] == "ego_opt"))
 })
-add("Sample", "Methods, Stimuli", "Most stimuli per pool (range)",
+add("Sample", "Methods, Generation of Pods-and-Dots stimuli", "Most stimuli per pool (range)",
     sprintf("%d to %d of %d", min(pools$most), max(pools$most), max(pools$n)),
     paste(sprintf("%s = %d", pools$pool, pools$most), collapse = "; "))
 
@@ -107,15 +113,15 @@ add("Main", "Results, Evidence of focalism", "Non-focal minus focal points lost 
 add("Main", "Table 2 caption; Results, Focalism", "Focalism test (reg. 1, b3)", f_pp(focal_b3), f_raw(focal_b3))
 add("Main", "Table 2 caption", "Egocentrism test p-value (reg. 1)", f_p(ego$p))
 add("Main", "Intro; Results, Focalism (Fig. 3b)", "Take gap (reg. 1, b1)", f_pp(take_gap), f_raw(take_gap))
-add("Main", "Intro; Results, Focalism (Fig. 3c) [X]; Discussion", "Give gap (reg. 1, b1 + b3)", f_pp(give_gap), f_raw(give_gap))
+add("Main", "Intro; Results, Focalism (Fig. 3c); Discussion", "Give gap (reg. 1, b1 + b3)", f_pp(give_gap), f_raw(give_gap))
 
 err_rates <- to_analyze %>% group_by(draw_mode) %>% summarise(rate = mean(error))
 tg <- feols(error ~ draw_mode, data = to_analyze, cluster = ~subject_id)
 tg_diff <- lc(tg, draw_modegive = 1)
-add("Main", "Results, Focalism [X]", "Overall error rate, Give / Take",
+add("Main", "Results, Focalism", "Overall error rate, Give / Take",
     sprintf("Give %s, Take %s", f_pct(err_rates$rate[err_rates$draw_mode == "give"], 1), f_pct(err_rates$rate[err_rates$draw_mode == "take"], 1)),
     sprintf("Give = %.4f, Take = %.4f", err_rates$rate[err_rates$draw_mode == "give"], err_rates$rate[err_rates$draw_mode == "take"]))
-add("Main", "Results, Focalism [X]", "Overall error rate, Give - Take (round level, clustered by subject)",
+add("Main", "Results, Focalism", "Overall error rate, Give - Take (round level, clustered by subject)",
     sprintf("%.1f pp (95%% CI [%.1f, %.1f], t(%d) = %.2f, %s)", 100 * tg_diff$est, 100 * tg_diff$lo, 100 * tg_diff$hi, tg_diff$df, tg_diff$t, f_p(tg_diff$p)),
     f_raw(tg_diff))
 add("Main", "Results, Focalism", "Give framing effect on gap, Coop vs Adv (Table 1 reg. 3, b6)", f_pp(triple), f_raw(triple))
@@ -259,11 +265,22 @@ fig7_n <- to_analyze %>%
 add("Moderation", "Supp. Fig. 13 caption", "Point sizes (N per round number and line)", sprintf("N = %d to N = %d", min(fig7_n$n), max(fig7_n$n)))
 
 rt <- fe_reg(time_to_decide ~ category*draw_mode + action_game_type | subject_id + round_grp_number)
-add("Moderation", "Methods, Regression analyses [N]; SI Table 13", "Participants choosing the payoff-maximizing pod in all 24 rounds",
+add("Moderation", "Methods, Regression analyses; SI Table 13", "Participants choosing the payoff-maximizing pod in all 24 rounds",
     sprintf("%d participants", n_distinct(to_analyze$subject_id[to_analyze$always_opt])))
 add("Moderation", "SI Table 13", "Response time, full sample: Least / Coop / Least x Give / egocentrism",
     paste(c(f_p(lc(rt, setNames(1, L))$p), f_p(lc(rt, action_game_typecooperative = 1)$p), f_p(lc(rt, setNames(1, LG))$p),
             f_p(lc(rt, setNames(c(1, .5), c(L, LG)))$p)), collapse = " / "))
+
+sat <- to_analyze %>% filter(action_game_type == "adversarial", exp_score_ego != 0) %>% mutate(pos = exp_score_ego > 0)
+sat_m <- fe_reg(time_to_decide ~ pos | subject_id + round_grp_number, sat)
+sat_s <- lc(sat_m, posTRUE = -1)
+sat_base <- mean(fitted(sat_m) - coef(sat_m)[["posTRUE"]] * sat$pos)
+sat_raw <- sat %>% group_by(pos) %>% summarise(m = mean(time_to_decide)) %>% deframe()
+add("Satisficing", "Results, Satisficing; Methods, Regression analyses", "Response time, Adversarial, own-score difference positive vs negative (participant + round-block FE)",
+    sprintf("%.1f seconds faster (%.1f vs. %.1f seconds, 95%% CI [%.2f, %.2f], t(%d) = %.2f, %s)", sat_s$est, sat_base + coef(sat_m)[["posTRUE"]], sat_base,
+            sat_s$lo, sat_s$hi, sat_s$df, sat_s$t, f_p(sat_s$p)), f_raw(sat_s))
+add("Satisficing", "Methods, Regression analyses", "Response time, unadjusted means (positive vs negative)",
+    sprintf("%.1f vs. %.1f seconds", sat_raw[["TRUE"]], sat_raw[["FALSE"]]))
 
 # ---- Robustness samples ----
 
@@ -283,9 +300,9 @@ for (nm in names(samps)) {
 # ---- Sensitivity ----
 
 mde <- \(s) 2.8 * s$se
-add("Sensitivity", "Methods, Sensitivity [X]", "MDE egocentrism (2.8 x SE, reg. 1)", sprintf("%.1f pp", 100 * mde(ego)), sprintf("SE = %.4f", ego$se))
-add("Sensitivity", "Methods, Sensitivity [X]", "MDE focalism, focal vs non-focal scale (2.8 x SE)", sprintf("%.1f pp", 100 * mde(foc_fw)), sprintf("SE = %.4f", foc_fw$se))
-add("Sensitivity", "Methods, Sensitivity [X]", "MDE Adv vs Coop gap difference (2.8 x SE, reg. 2)", sprintf("%.1f pp", 100 * mde(coop_diff)), sprintf("SE = %.4f", coop_diff$se))
+add("Sensitivity", "Methods, Sample size", "MDE egocentrism (2.8 x SE, reg. 1)", sprintf("%.1f pp", 100 * mde(ego)), sprintf("SE = %.4f", ego$se))
+add("Sensitivity", "Methods, Sample size", "MDE focalism, focal vs non-focal scale (2.8 x SE)", sprintf("%.1f pp", 100 * mde(foc_fw)), sprintf("SE = %.4f", foc_fw$se))
+add("Sensitivity", "Methods, Sample size", "MDE Adv vs Coop gap difference (2.8 x SE, reg. 2)", sprintf("%.1f pp", 100 * mde(coop_diff)), sprintf("SE = %.4f", coop_diff$se))
 
 # ---- Write ----
 
