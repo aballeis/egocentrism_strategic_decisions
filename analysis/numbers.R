@@ -143,12 +143,8 @@ by_subj <- function(df) df %>%
   mutate(comp = n - own)
 share <- \(d, cond, f) mean(f(filter(d, draw_mode == cond)))
 w_share <- \(d, f_take, f_give) mean(c(share(d, "take", f_take), share(d, "give", f_give)))
-w_count <- function(d, f_take, f_give) {
-  n_c <- count(d, draw_mode)$n
-  names(n_c) <- count(d, draw_mode)$draw_mode
-  round(mean(n_c) * (share(d, "take", f_take) + share(d, "give", f_give)))
-}
-w_binom <- \(a, b) binom.test(a, a + b)$p.value
+k_pool <- \(d, f_take, f_give) sum(f_take(filter(d, draw_mode == "take"))) + sum(f_give(filter(d, draw_mode == "give")))
+binom_p <- \(a, b) binom.test(a, a + b)$p.value
 
 all24 <- by_subj(to_analyze)
 add("Heterogeneity", "Results, Heterogeneity p1", "Payoff optimizers (>= 23 of 24), Take / Give",
@@ -181,45 +177,41 @@ comp18 <- \(d) d$comp > 17
 k_take <- c(own = sum(own18(filter(all24, draw_mode == "take"))), comp = sum(comp18(filter(all24, draw_mode == "take"))))
 add("Heterogeneity", "Results, Heterogeneity p3", "Take: consistent own / computer (> 17 of 24), binomial test",
     sprintf("own %s, computer %s (%d vs %d, %s)", f_pct(share(all24, "take", own18)), f_pct(share(all24, "take", comp18)),
-            k_take[["own"]], k_take[["comp"]], f_p(w_binom(k_take[["own"]], k_take[["comp"]]))))
+            k_take[["own"]], k_take[["comp"]], f_p(binom_p(k_take[["own"]], k_take[["comp"]]))))
 add("Heterogeneity", "Results, Heterogeneity p3", "Give: consistent own / computer (> 17 of 24)",
     sprintf("own %s, computer %s", f_pct(share(all24, "give", own18)), f_pct(share(all24, "give", comp18))))
-ego_k <- c(w_count(all24, own18, own18), w_count(all24, comp18, comp18))
-foc_k <- c(w_count(all24, own18, comp18), w_count(all24, comp18, own18))
-add("Heterogeneity", "Results, Heterogeneity p3", "Pooled weighted: consistent own vs computer",
-    sprintf("%s vs %s, %s", f_pct(w_share(all24, own18, own18)), f_pct(w_share(all24, comp18, comp18)), f_p(w_binom(ego_k[1], ego_k[2]))),
-    sprintf("weighted counts %d vs %d", ego_k[1], ego_k[2]))
-add("Heterogeneity", "Results, Heterogeneity p3", "Pooled weighted: consistent focal vs non-focal",
-    sprintf("%s vs %s, %s", f_pct(w_share(all24, own18, comp18)), f_pct(w_share(all24, comp18, own18)), f_p(w_binom(foc_k[1], foc_k[2]))),
-    sprintf("weighted counts %d vs %d", foc_k[1], foc_k[2]))
+ego_k <- c(k_pool(all24, own18, own18), k_pool(all24, comp18, comp18))
+foc_k <- c(k_pool(all24, own18, comp18), k_pool(all24, comp18, own18))
+add("Heterogeneity", "Results, Heterogeneity p3", "Pooled: consistent own vs computer (binomial test)",
+    sprintf("%s vs %s, %s", f_pct(ego_k[1] / nrow(all24)), f_pct(ego_k[2] / nrow(all24)), f_p(binom_p(ego_k[1], ego_k[2]))),
+    sprintf("counts %d vs %d", ego_k[1], ego_k[2]))
+add("Heterogeneity", "Results, Heterogeneity p3", "Pooled: consistent focal vs non-focal (binomial test)",
+    sprintf("%s vs %s, %s", f_pct(foc_k[1] / nrow(all24)), f_pct(foc_k[2] / nrow(all24)), f_p(binom_p(foc_k[1], foc_k[2]))),
+    sprintf("counts %d vs %d", foc_k[1], foc_k[2]))
 
 strat <- participants %>%
   mutate(group = case_when(str_detect(strat_overall, "red") ~ "own", str_detect(strat_overall, "blue") ~ "comp",
                            str_detect(strat_overall, "Both") ~ "both", TRUE ~ "other")) %>%
   left_join(select(all24, subject_id, own), by = "subject_id")
-sr_k <- function(f_take, f_give) {
-  n_c <- count(strat, draw_mode) %>% deframe()
-  round(mean(n_c) * (mean(f_take(filter(strat, draw_mode == "take"))) + mean(f_give(filter(strat, draw_mode == "give")))))
-}
 is_g <- \(g) \(d) d$group == g
-sr_ego <- c(sr_k(is_g("own"), is_g("own")), sr_k(is_g("comp"), is_g("comp")))
-sr_foc <- c(sr_k(is_g("own"), is_g("comp")), sr_k(is_g("comp"), is_g("own")))
-add("Heterogeneity", "SI Table 6 caption", "Self-report own vs computer (raw counts; weighted binomial)",
-    sprintf("%d vs %d, %s", sum(strat$group == "own"), sum(strat$group == "comp"), f_p(w_binom(sr_ego[1], sr_ego[2]))),
-    sprintf("weighted counts %d vs %d", sr_ego[1], sr_ego[2]))
-add("Heterogeneity", "SI Table 6 caption", "Self-report focal vs non-focal (raw counts; weighted binomial)",
+sr_ego <- c(k_pool(strat, is_g("own"), is_g("own")), k_pool(strat, is_g("comp"), is_g("comp")))
+sr_foc <- c(k_pool(strat, is_g("own"), is_g("comp")), k_pool(strat, is_g("comp"), is_g("own")))
+add("Heterogeneity", "SI Table 6 caption", "Self-report own vs computer (binomial test)",
+    sprintf("%d vs %d, %s", sum(strat$group == "own"), sum(strat$group == "comp"), f_p(binom_p(sr_ego[1], sr_ego[2]))),
+    sprintf("counts %d vs %d", sr_ego[1], sr_ego[2]))
+add("Heterogeneity", "SI Table 6 caption", "Self-report focal vs non-focal (binomial test)",
     sprintf("%d vs %d, %s", sum(strat$group == "own" & strat$draw_mode == "take") + sum(strat$group == "comp" & strat$draw_mode == "give"),
             sum(strat$group == "comp" & strat$draw_mode == "take") + sum(strat$group == "own" & strat$draw_mode == "give"),
-            f_p(w_binom(sr_foc[1], sr_foc[2]))),
-    sprintf("weighted counts %d vs %d", sr_foc[1], sr_foc[2]))
+            f_p(binom_p(sr_foc[1], sr_foc[2]))),
+    sprintf("counts %d vs %d", sr_foc[1], sr_foc[2]))
 for (v in c("strat_adv", "strat_coop")) {
   g <- case_when(str_detect(participants[[v]], "red") ~ "own", str_detect(participants[[v]], "blue") ~ "comp", TRUE ~ "other")
   take <- participants$draw_mode == "take"
   k <- c(own = sum(g == "own"), comp = sum(g == "comp"),
          foc = sum(g == "own" & take) + sum(g == "comp" & !take), non = sum(g == "comp" & take) + sum(g == "own" & !take))
   add("Heterogeneity", "SI Table 6 caption", sprintf("Self-report, %s rounds: own vs computer; focal vs non-focal (raw counts, binomial)", sub("strat_", "", v)),
-      sprintf("%d vs %d, %s; %d vs %d, %s", k[["own"]], k[["comp"]], f_p(w_binom(k[["own"]], k[["comp"]])),
-              k[["foc"]], k[["non"]], f_p(w_binom(k[["foc"]], k[["non"]]))))
+      sprintf("%d vs %d, %s; %d vs %d, %s", k[["own"]], k[["comp"]], f_p(binom_p(k[["own"]], k[["comp"]])),
+              k[["foc"]], k[["non"]], f_p(binom_p(k[["foc"]], k[["non"]]))))
 }
 for (g in c("both", "own")) {
   bal <- strat %>% filter(group == g) %>% group_by(draw_mode) %>% summarise(m = mean(own / 24)) %>% pull(m) %>% mean()
@@ -290,7 +282,7 @@ add("Satisficing", "Results, Satisficing; Methods, Regression analyses", "Respon
     sprintf("%.1f seconds faster (%.1f vs. %.1f seconds, 95%% CI [%.2f, %.2f], t(%d) = %.2f, %s)", sat_s$est, sat_base + coef(sat_m)[["posTRUE"]], sat_base,
             sat_s$lo, sat_s$hi, sat_s$df, sat_s$t, f_p(sat_s$p)), f_raw(sat_s))
 add("Satisficing", "Methods, Regression analyses", "Response time, unadjusted means (positive vs negative)",
-    sprintf("%.1f vs. %.1f seconds", sat_raw[["TRUE"]], sat_raw[["FALSE"]]))
+    sprintf("%.1f vs. %.1f seconds (difference %.1f seconds)", sat_raw[["TRUE"]], sat_raw[["FALSE"]], sat_raw[["FALSE"]] - sat_raw[["TRUE"]]))
 
 # ---- Robustness samples ----
 
