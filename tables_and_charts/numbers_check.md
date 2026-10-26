@@ -59,10 +59,10 @@ Linear combinations use t(clusters - 1); round-level models cluster by subject_i
 | SI Table 5 caption | Two-sided binomial p for at least 10 of 12 | p = .039 | 0.0386 |
 | Results, Heterogeneity p3 | Take: consistent own / computer (> 17 of 24), binomial test | own 25%, computer 0% (31 vs 0, p < .001) |  |
 | Results, Heterogeneity p3 | Give: consistent own / computer (> 17 of 24) | own 8%, computer 4% |  |
-| Results, Heterogeneity p3 | Pooled weighted: consistent own vs computer | 17% vs 2%, p < .001 | weighted counts 41 vs 5 |
-| Results, Heterogeneity p3 | Pooled weighted: consistent focal vs non-focal | 15% vs 4%, p < .001 | weighted counts 36 vs 10 |
-| SI Table 6 caption | Self-report own vs computer (raw counts; weighted binomial) | 38 vs 5, p < .001 | weighted counts 38 vs 5 |
-| SI Table 6 caption | Self-report focal vs non-focal (raw counts; weighted binomial) | 30 vs 13, p = .014 | weighted counts 30 vs 13 |
+| Results, Heterogeneity p3 | Pooled: consistent own vs computer (binomial test) | 17% vs 2%, p < .001 | counts 41 vs 5 |
+| Results, Heterogeneity p3 | Pooled: consistent focal vs non-focal (binomial test) | 15% vs 4%, p < .001 | counts 36 vs 10 |
+| SI Table 6 caption | Self-report own vs computer (binomial test) | 38 vs 5, p < .001 | counts 38 vs 5 |
+| SI Table 6 caption | Self-report focal vs non-focal (binomial test) | 30 vs 13, p = .014 | counts 30 vs 13 |
 | SI Table 6 caption | Self-report, adv rounds: own vs computer; focal vs non-focal (raw counts, binomial) | 72 vs 20, p < .001; 44 vs 48, p = .755 |  |
 | SI Table 6 caption | Self-report, coop rounds: own vs computer; focal vs non-focal (raw counts, binomial) | 24 vs 19, p = .542; 22 vs 21, p = 1.000 |  |
 | SI Table 6 caption | Own-score pod share, self-report 'both', controlling for Take/Give | 56.4% (Take/Give equally weighted); 56.4% (regression-adjusted) |  |
@@ -104,7 +104,7 @@ Linear combinations use t(clusters - 1); round-level models cluster by subject_i
 | Location | Statistic | Value | Unrounded |
 |---|---|---|---|
 | Results, Satisficing; Methods, Regression analyses | Response time, Adversarial, own-score difference positive vs negative (participant + round-block FE) | 1.2 seconds faster (6.4 vs. 7.6 seconds, 95% CI [0.56, 1.83], t(245) = 3.71, p < .001) | est = 1.1973, SE = 0.3224 |
-| Methods, Regression analyses | Response time, unadjusted means (positive vs negative) | 6.3 vs. 7.7 seconds |  |
+| Methods, Regression analyses | Response time, unadjusted means (positive vs negative) | 6.3 vs. 7.7 seconds (difference 1.5 seconds) |  |
 
 ## Robustness
 
