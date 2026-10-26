@@ -12,7 +12,7 @@ Linear combinations use t(clusters - 1); round-level models cluster by subject_i
 | Fig. 2 caption; Supp. Fig. 6 caption | Participants per framing condition, full sample | Take N = 122, Give N = 124 |  |
 | Supp. Fig. 1 caption | Participants per framing condition, passed comprehension checks | Take N = 69, Give N = 74 |  |
 | Methods, Participants | Participants per cell (framing x first role) | take/adversarial-first = 62; take/cooperative-first = 60; give/adversarial-first = 63; give/cooperative-first = 61 |  |
-| Methods, Participants | Gender | 54% male, 44% female, 3 not reported |  |
+| Methods, Participants | Gender | 54% male, 44% female, 1% other (3) |  |
 | Methods, Participants | Race/ethnicity | White / Caucasian 75%; Black / African-American 11%; Asian / Asian-American 9%; Latino / Hispanic 4%; Multiple, mixed, or other 2% | White / Caucasian = 184; Black / African-American = 26; Asian / Asian-American = 21; Latino / Hispanic = 9; Multiple, mixed, or other = 6 |
 | Methods, Participants | Age range (mean) | 23 to 77 (mean = 44) |  |
 | Methods, Incentives | Bonus range (mean) | $0.40 to $1.60 (mean = $1.04) |  |
@@ -63,6 +63,8 @@ Linear combinations use t(clusters - 1); round-level models cluster by subject_i
 | Results, Heterogeneity p3 | Pooled weighted: consistent focal vs non-focal | 15% vs 4%, p < .001 | weighted counts 36 vs 10 |
 | SI Table 6 caption | Self-report own vs computer (raw counts; weighted binomial) | 38 vs 5, p < .001 | weighted counts 38 vs 5 |
 | SI Table 6 caption | Self-report focal vs non-focal (raw counts; weighted binomial) | 30 vs 13, p = .014 | weighted counts 30 vs 13 |
+| SI Table 6 caption | Self-report, adv rounds: own vs computer; focal vs non-focal (raw counts, binomial) | 72 vs 20, p < .001; 44 vs 48, p = .755 |  |
+| SI Table 6 caption | Self-report, coop rounds: own vs computer; focal vs non-focal (raw counts, binomial) | 24 vs 19, p = .542; 22 vs 21, p = 1.000 |  |
 | SI Table 6 caption | Own-score pod share, self-report 'both', controlling for Take/Give | 56.4% (Take/Give equally weighted); 56.4% (regression-adjusted) |  |
 | SI Table 6 caption | Own-score pod share, self-report 'own', controlling for Take/Give | 69.3% (Take/Give equally weighted); 70.1% (regression-adjusted) |  |
 

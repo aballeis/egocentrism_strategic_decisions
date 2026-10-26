@@ -58,8 +58,9 @@ add("Sample", "Supp. Fig. 1 caption", "Participants per framing condition, passe
 add("Sample", "Methods, Participants", "Participants per cell (framing x first role)",
     paste(sprintf("%s/%s-first = %d", first_role$draw_mode, first_role$action_game_type, first_role$n), collapse = "; "))
 add("Sample", "Methods, Participants", "Gender",
-    sprintf("%s male, %s female, %d not reported", f_pct(mean(participants$gender == "Male")),
-            f_pct(mean(participants$gender == "Female")), sum(!participants$gender %in% c("Male", "Female"))))
+    sprintf("%s male, %s female, %s other (%d)", f_pct(mean(participants$gender == "Male")),
+            f_pct(mean(participants$gender == "Female")), f_pct(mean(!participants$gender %in% c("Male", "Female"))),
+            sum(!participants$gender %in% c("Male", "Female"))))
 race <- participants %>%
   mutate(race = if_else(race %in% c("Multiple / mixed-race", "Other"), "Multiple, mixed, or other", race)) %>%
   count(race, sort = TRUE)
@@ -211,6 +212,15 @@ add("Heterogeneity", "SI Table 6 caption", "Self-report focal vs non-focal (raw 
             sum(strat$group == "comp" & strat$draw_mode == "take") + sum(strat$group == "own" & strat$draw_mode == "give"),
             f_p(w_binom(sr_foc[1], sr_foc[2]))),
     sprintf("weighted counts %d vs %d", sr_foc[1], sr_foc[2]))
+for (v in c("strat_adv", "strat_coop")) {
+  g <- case_when(str_detect(participants[[v]], "red") ~ "own", str_detect(participants[[v]], "blue") ~ "comp", TRUE ~ "other")
+  take <- participants$draw_mode == "take"
+  k <- c(own = sum(g == "own"), comp = sum(g == "comp"),
+         foc = sum(g == "own" & take) + sum(g == "comp" & !take), non = sum(g == "comp" & take) + sum(g == "own" & !take))
+  add("Heterogeneity", "SI Table 6 caption", sprintf("Self-report, %s rounds: own vs computer; focal vs non-focal (raw counts, binomial)", sub("strat_", "", v)),
+      sprintf("%d vs %d, %s; %d vs %d, %s", k[["own"]], k[["comp"]], f_p(w_binom(k[["own"]], k[["comp"]])),
+              k[["foc"]], k[["non"]], f_p(w_binom(k[["foc"]], k[["non"]]))))
+}
 for (g in c("both", "own")) {
   bal <- strat %>% filter(group == g) %>% group_by(draw_mode) %>% summarise(m = mean(own / 24)) %>% pull(m) %>% mean()
   reg <- feols(I(own / 24) ~ i(group, ref = g) + draw_mode, data = strat, vcov = "hetero")

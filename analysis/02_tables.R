@@ -377,30 +377,38 @@ mirror(file.path(main_dir, "tab_hetero_roles.tex"))
 # ---- Table D1: self-reported strategic focus ----
 
 focus_labels <- c(
-  "Both of the above were equally relevant." = "All dot colors equally",
-  "The amount of red dots in each pod."      = "Dots that scored points for the participant",
-  "The amount of blue dots in each pod."     = "Dots that scored points for the computer player",
+  "Both of the above were equally relevant." = "All dots equally",
+  "The amount of red dots in each pod."      = "Dots that scored for participant",
+  "The amount of blue dots in each pod."     = "Dots that scored for computer",
   "Something else."                          = "Something else",
   "Not sure."                                = "Not sure"
 )
 
-focus <- hetero %>%
-  count(draw_mode, strat_overall) %>%
-  group_by(draw_mode) %>%
-  mutate(cell = sprintf("%d (%d\\%%)", n, round(100 * n / sum(n)))) %>%
-  ungroup() %>%
-  select(-n) %>%
-  pivot_wider(names_from = draw_mode, values_from = cell, values_fill = "0 (0\\%)") %>%
-  mutate(label = focus_labels[strat_overall]) %>%
-  arrange(match(strat_overall, names(focus_labels)))
+focus <- map(c("strat_overall", "strat_adv", "strat_coop"), \(v) {
+  hetero %>%
+    mutate(answer = factor(.data[[v]], levels = names(focus_labels))) %>%
+    count(draw_mode, answer, .drop = FALSE) %>%
+    group_by(draw_mode) %>%
+    mutate(cell = sprintf("%d (%d\\%%)", n, round(100 * n / sum(n)))) %>%
+    ungroup() %>%
+    select(-n) %>%
+    pivot_wider(names_from = draw_mode, values_from = cell) %>%
+    select(answer, take, give)
+}) %>%
+  reduce(left_join, by = "answer") %>%
+  mutate(label = focus_labels[as.character(answer)])
 
 writeLines(c(
-  "\\begin{tabular}{p{0.58\\textwidth}cc}",
+  "\\begingroup\\small\\setlength{\\tabcolsep}{4pt}",
+  "\\begin{tabular*}{\\linewidth}{@{\\extracolsep{\\fill}}lcccccc}",
   "   \\toprule",
-  "   \\textbf{Self-reported focus} & \\textbf{Take} & \\textbf{Give}\\\\",
+  "   & \\multicolumn{2}{c}{\\textbf{Overall}} & \\multicolumn{2}{c}{\\textbf{Adversarial rounds}} & \\multicolumn{2}{c}{\\textbf{Cooperative rounds}}\\\\",
+  "   \\cmidrule(lr){2-3} \\cmidrule(lr){4-5} \\cmidrule(lr){6-7}",
+  "   \\textbf{Self-reported focus} & \\textbf{Take} & \\textbf{Give} & \\textbf{Take} & \\textbf{Give} & \\textbf{Take} & \\textbf{Give}\\\\",
   "   \\midrule",
-  pmap_chr(focus, \(label, take, give, ...) row(label, c(take, give))),
-  "   \\bottomrule", "\\end{tabular}"
+  pmap_chr(select(focus, label, take.x, give.x, take.y, give.y, take, give),
+           \(label, ...) row(label, c(...))),
+  "   \\bottomrule", "\\end{tabular*}", "\\par\\endgroup"
 ), file.path(main_dir, "tab_strategy_focus.tex"))
 mirror(file.path(main_dir, "tab_strategy_focus.tex"))
 
