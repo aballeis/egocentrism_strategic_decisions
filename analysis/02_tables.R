@@ -158,12 +158,12 @@ foc_p <- function(m, v = NULL) {
 # ---- Table 1 (main/), A1 (pass_comps/), B1 (exclude_early/) ----
 
 term_map_main <- c(
-  "categoryother_opt" = "Least impact on own score",
+  "categoryother_opt" = "OwnScoreSecondary",
   "action_game_typecooperative" = "Cooperative",
-  "categoryother_opt:draw_modegive" = "Least $\\times$ Give",
-  "categoryother_opt:action_game_typecooperative" = "Least $\\times$ Cooperative",
+  "categoryother_opt:draw_modegive" = "OwnScoreSecondary $\\times$ Give",
+  "categoryother_opt:action_game_typecooperative" = "OwnScoreSecondary $\\times$ Cooperative",
   "draw_modegive:action_game_typecooperative" = "Give $\\times$ Cooperative",
-  "categoryother_opt:draw_modegive:action_game_typecooperative" = "Least $\\times$ Give $\\times$ Cooperative"
+  "categoryother_opt:draw_modegive:action_game_typecooperative" = "OwnScoreSecondary $\\times$ Give $\\times$ Cooperative"
 )
 
 samps <- list(
@@ -198,21 +198,21 @@ write_reg_table(models_lost, term_map_main, file.path(main_dir, "fig4_reg_lost.t
 # ---- Table C1: moderation by error cost, complexity, round ----
 
 term_map_mod1 <- c(
-  "categoryother_opt" = "Least",
+  "categoryother_opt" = "OwnScoreSecondary",
   "action_game_typecooperative" = "Cooperative",
-  "categoryother_opt:draw_modegive" = "Least $\\times$ Give",
+  "categoryother_opt:draw_modegive" = "OwnScoreSecondary $\\times$ Give",
   "cost_c" = "Error Cost",
-  "categoryother_opt:cost_c" = "Least $\\times$ Error Cost",
+  "categoryother_opt:cost_c" = "OwnScoreSecondary $\\times$ Error Cost",
   "draw_modegive:cost_c" = "Give $\\times$ Error Cost",
-  "categoryother_opt:draw_modegive:cost_c" = "Least $\\times$ Give $\\times$ Error Cost",
+  "categoryother_opt:draw_modegive:cost_c" = "OwnScoreSecondary $\\times$ Give $\\times$ Error Cost",
   "dots_c" = "Complexity",
-  "categoryother_opt:dots_c" = "Least $\\times$ Complexity",
+  "categoryother_opt:dots_c" = "OwnScoreSecondary $\\times$ Complexity",
   "draw_modegive:dots_c" = "Give $\\times$ Complexity",
-  "categoryother_opt:draw_modegive:dots_c" = "Least $\\times$ Give $\\times$ Complexity",
+  "categoryother_opt:draw_modegive:dots_c" = "OwnScoreSecondary $\\times$ Give $\\times$ Complexity",
   "round_num_within_c" = "Round Num.",
-  "categoryother_opt:round_num_within_c" = "Least $\\times$ Round Num.",
+  "categoryother_opt:round_num_within_c" = "OwnScoreSecondary $\\times$ Round Num.",
   "draw_modegive:round_num_within_c" = "Give $\\times$ Round Num.",
-  "categoryother_opt:draw_modegive:round_num_within_c" = "Least $\\times$ Give $\\times$ Round Num."
+  "categoryother_opt:draw_modegive:round_num_within_c" = "OwnScoreSecondary $\\times$ Give $\\times$ Round Num."
 )
 
 mods <- c("cost_c", "dots_c", "round_num_within_c")
@@ -234,21 +234,21 @@ write_reg_table(models_mod1, term_map_mod1, file.path(main_dir, "tab_mod1.tex"),
 # ---- Table C2: moderation by individual differences ----
 
 term_map_mod2 <- c(
-  "categoryother_opt" = "Least",
+  "categoryother_opt" = "OwnScoreSecondary",
   "action_game_typecooperative" = "Cooperative",
-  "categoryother_opt:draw_modegive" = "Least $\\times$ Give",
+  "categoryother_opt:draw_modegive" = "OwnScoreSecondary $\\times$ Give",
   "educ_rank_c" = "Ed. Level",
-  "categoryother_opt:educ_rank_c" = "Least $\\times$ Ed. Level",
+  "categoryother_opt:educ_rank_c" = "OwnScoreSecondary $\\times$ Ed. Level",
   "draw_modegive:educ_rank_c" = "Give $\\times$ Ed. Level",
-  "categoryother_opt:draw_modegive:educ_rank_c" = "Least $\\times$ Give $\\times$ Ed. Level",
+  "categoryother_opt:draw_modegive:educ_rank_c" = "OwnScoreSecondary $\\times$ Give $\\times$ Ed. Level",
   "crt_c" = "CRT",
-  "categoryother_opt:crt_c" = "Least $\\times$ CRT",
+  "categoryother_opt:crt_c" = "OwnScoreSecondary $\\times$ CRT",
   "draw_modegive:crt_c" = "Give $\\times$ CRT",
-  "categoryother_opt:draw_modegive:crt_c" = "Least $\\times$ Give $\\times$ CRT",
+  "categoryother_opt:draw_modegive:crt_c" = "OwnScoreSecondary $\\times$ Give $\\times$ CRT",
   "numeracy_c" = "Numeracy",
-  "categoryother_opt:numeracy_c" = "Least $\\times$ Numeracy",
+  "categoryother_opt:numeracy_c" = "OwnScoreSecondary $\\times$ Numeracy",
   "draw_modegive:numeracy_c" = "Give $\\times$ Numeracy",
-  "categoryother_opt:draw_modegive:numeracy_c" = "Least $\\times$ Give $\\times$ Numeracy"
+  "categoryother_opt:draw_modegive:numeracy_c" = "OwnScoreSecondary $\\times$ Give $\\times$ Numeracy"
 )
 
 mods <- c("educ_rank_c", "crt_c", "numeracy_c")
@@ -262,9 +262,9 @@ write_reg_table(models_mod2, term_map_mod2, file.path(main_dir, "tab_mod2.tex"),
 # ---- Table C5: by pair of rounds ----
 
 term_map_round <- c(
-  "categoryother_opt" = "Least",
+  "categoryother_opt" = "OwnScoreSecondary",
   "action_game_typecooperative" = "Cooperative",
-  "categoryother_opt:draw_modegive" = "Least $\\times$ Give"
+  "categoryother_opt:draw_modegive" = "OwnScoreSecondary $\\times$ Give"
 )
 
 models_round <- map(1:6, \(rg) feols(error ~ category*draw_mode + action_game_type | subject_id,
@@ -323,7 +323,7 @@ writeLines(c(
   "\\begingroup", "\\centering",
   "\\begin{tabular*}{\\linewidth}{@{\\extracolsep{\\fill}}llcccc}",
   "   \\toprule",
-  "   Framing & Role & Most & Least & Least $-$ Most & Participants\\\\",
+  "   Framing & Role & Primary & Secondary & Secondary $-$ Primary & Participants\\\\",
   "   \\midrule",
   pmap_chr(cells, \(draw_mode, action_game_type, n, most, least) row(
     str_to_title(as.character(draw_mode)), c(str_to_title(as.character(action_game_type)), fmt_num(most), fmt_num(least), fmt_num(least - most), fmt_int(n)))),
@@ -425,9 +425,9 @@ mirror(file.path(main_dir, "tab_strategy_focus.tex"))
 # ---- Table E1: response times ----
 
 term_map_rt <- c(
-  "categoryother_opt" = "Least impact on own score",
+  "categoryother_opt" = "OwnScoreSecondary",
   "action_game_typecooperative" = "Cooperative",
-  "categoryother_opt:draw_modegive" = "Least $\\times$ Give"
+  "categoryother_opt:draw_modegive" = "OwnScoreSecondary $\\times$ Give"
 )
 
 models_rt <- list(
