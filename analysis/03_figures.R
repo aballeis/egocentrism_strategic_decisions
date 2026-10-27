@@ -41,7 +41,7 @@ estimate <- function(d, v, balanced) {
 
 summarise_bars <- function(d, balanced = FALSE) {
   d %>%
-    group_by(x_lab, fill) %>%
+    group_by(ord, x_lab, fill) %>%
     group_modify(\(g, k) {
       err <- estimate(g, "error", balanced)
       tibble(error_rate = err[["est"]], error_lo = err[["lo"]], error_hi = err[["hi"]])
@@ -49,10 +49,10 @@ summarise_bars <- function(d, balanced = FALSE) {
     ungroup()
 }
 
-own_vs_other <- function(df) {
+own_vs_other <- function(df, labs = c("Primary", "Secondary")) {
   df %>%
     filter(category %in% c("ego_opt", "other_opt")) %>%
-    mutate(x_lab = if_else(category == "ego_opt", "More", "Less"),
+    mutate(ord = if_else(category == "ego_opt", 1, 2), x_lab = labs[ord],
            fill = if_else(category == "ego_opt", "#B30000", "#1E4B9B"))
 }
 
@@ -74,7 +74,7 @@ bar_theme <- theme_minimal(base_size = 12) +
 
 bar_plot <- function(df, ylab = NULL) {
   df <- df %>%
-    arrange(x_lab != "More") %>%
+    arrange(ord) %>%
     mutate(x = seq_len(n()))
   ggplot(df, aes(x = x, y = error_rate, fill = fill)) +
     geom_col(width = 0.30) +
@@ -88,10 +88,11 @@ bar_plot <- function(df, ylab = NULL) {
     bar_theme
 }
 
-own_axis <- "How choice impacts own score (relative to computer player's score)"
+own_axis <- "Importance of participant's own score for their payoff"
 
 three_panel_page <- function(panels, titles, x_title = own_axis) {
   cols <- imap(panels, \(p, i) ggplotGrob(bar_plot(p, if (i == 1) "Error rate")))
+  cols <- map(cols, \(g) { g$heights <- do.call(unit.pmax, map(cols, "heights")); g })
   bold <- \(s, size) gpar(fontsize = size, fontface = "bold")
   heads <- unlist(map2(c("a.", "b.", "c."), titles, \(l, t) list(
     textGrob(l, x = 0.02, y = 0.95, hjust = 0, vjust = 1, gp = bold(l, 15)),
@@ -116,12 +117,13 @@ fig2_ego <- function(df) {
 fig3_focal <- function(df) {
   focal <- df %>%
     filter(!is.na(focal_works)) %>%
-    mutate(x_lab = if_else(focal_works, "More", "Less"), fill = if_else(focal_works, "#E69F00", "#00BFC4"))
+    mutate(ord = if_else(focal_works, 1, 2), x_lab = if_else(focal_works, "Focal", "Non-focal"),
+           fill = if_else(focal_works, "#E69F00", "#00BFC4"))
   three_panel_page(list(
     summarise_bars(focal),
-    summarise_bars(filter(focal, draw_mode == "take")),
-    summarise_bars(filter(focal, draw_mode == "give"))
-  ), c("All", "Take", "Give"), "How choice impacts focal score (relative to non-focal score)")
+    summarise_bars(own_vs_other(filter(df, draw_mode == "take"), c("Own\n(Focal)", "Computer's\n(Non-focal)"))),
+    summarise_bars(own_vs_other(filter(df, draw_mode == "give"), c("Own\n(Non-focal)", "Computer's\n(Focal)")))
+  ), c("All", "Take", "Give"), "Score of primary importance")
 }
 
 save_grob <- function(g, file) {
