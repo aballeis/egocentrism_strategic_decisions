@@ -79,7 +79,7 @@ pools <- map_dfr(c("take_adv", "give_adv", "take_coop", "give_coop"), \(p) {
   read_csv(file.path("interface/stimuli", paste0("draft_sample2_", p, ".csv")), show_col_types = FALSE) %>%
     summarise(pool = p, n = n(), most = sum(.data[[paste0("category_", parts[2], "_", parts[1])]] == "ego_opt"))
 })
-add("Sample", "Methods, Generation of Pods-and-Dots stimuli", "Most stimuli per pool (range)",
+add("Sample", "Methods, Generation of Pods-and-Dots stimuli", "Own-score-primary stimuli per pool (range)",
     sprintf("%d to %d of %d", min(pools$most), max(pools$most), max(pools$n)),
     paste(sprintf("%s = %d", pools$pool, pools$most), collapse = "; "))
 
@@ -105,7 +105,7 @@ lost <- lc(lost1, setNames(c(1, .5), c(L, LG)))
 
 add("Main", "Intro; Results, Egocentrism; Discussion", "Egocentrism gap (Table 1 reg. 1, b1 + b3/2)", f_pp(ego), f_raw(ego))
 add("Main", "Results, Egocentrism; SI Table 4", "Points lost per round (reg. 1, b1 + b3/2)", f_pts(lost), f_raw(lost))
-add("Main", "Results, Egocentrism", "Gap larger in Cooperative than Adversarial (Table 1 reg. 2, Least x Coop)", f_pp(coop_diff), f_raw(coop_diff))
+add("Main", "Results, Egocentrism", "Gap larger in Cooperative than Adversarial (Table 1 reg. 2, OwnScoreSecondary x Coop)", f_pp(coop_diff), f_raw(coop_diff))
 add("Main", "Intro; Results, Egocentrism (Fig. 2b,c)", "Egocentrism gap, Adversarial (reg. 2)", f_pp(adv_gap), f_raw(adv_gap))
 add("Main", "Intro; Results, Egocentrism (Fig. 2b,c)", "Egocentrism gap, Cooperative (reg. 2)", f_pp(coop_gap), f_raw(coop_gap))
 add("Main", "Results, Focalism (Fig. 3a)", "Focal vs non-focal error rate", f_pp(foc_fw), f_raw(foc_fw))
@@ -140,7 +140,7 @@ order_df <- to_analyze %>%
          coop_first = as.integer(action_game_type[round_number == 1] == "cooperative")) %>%
   ungroup()
 ord <- lc(fe_reg(error ~ least + least:coop_first | subject_id, order_df), `least:coop_first` = 1)
-add("Main", "Methods, Regression analyses (order test)", "Least x CoopFirst (gamma2)", f_pp(ord, 1), f_raw(ord))
+add("Main", "Methods, Regression analyses (order test)", "OwnScoreSecondary x CoopFirst (gamma2)", f_pp(ord, 1), f_raw(ord))
 
 # ---- Heterogeneity ----
 
@@ -276,7 +276,7 @@ add("Moderation", "Supp. Fig. 13 caption", "Point sizes (N per round number and 
 rt <- fe_reg(time_to_decide ~ category*draw_mode + action_game_type | subject_id + round_grp_number)
 add("Moderation", "Methods, Regression analyses; SI Table 14", "Participants choosing the payoff-maximizing pod in all 24 rounds",
     sprintf("%d participants", n_distinct(to_analyze$subject_id[to_analyze$always_opt])))
-add("Moderation", "SI Table 14", "Response time, full sample: Least / Coop / Least x Give / egocentrism",
+add("Moderation", "SI Table 14", "Response time, full sample: OwnScoreSecondary / Coop / OwnScoreSecondary x Give / egocentrism",
     paste(c(f_p(lc(rt, setNames(1, L))$p), f_p(lc(rt, action_game_typecooperative = 1)$p), f_p(lc(rt, setNames(1, LG))$p),
             f_p(lc(rt, setNames(c(1, .5), c(L, LG)))$p)), collapse = " / "))
 
@@ -301,7 +301,7 @@ for (nm in names(samps)) {
   r3 <- fe_reg(error ~ category*draw_mode*action_game_type | subject_id, d)
   for (x in list(list("Egocentrism", lc(r1, setNames(c(1, .5), c(L, LG)))), list("Focalism (b3)", lc(r1, setNames(1, LG))),
                  list("Take gap", lc(r1, setNames(1, L))), list("Give gap", lc(r1, setNames(c(1, 1), c(L, LG)))),
-                 list("Coop - Adv gap", lc(r2, setNames(1, LC))), list("Least x Give x Coop", lc(r3, setNames(1, LGC))))) {
+                 list("Coop - Adv gap", lc(r2, setNames(1, LC))), list("OwnScoreSecondary x Give x Coop", lc(r3, setNames(1, LGC))))) {
     add("Robustness", "Results opening (restricted samples)", sprintf("%s: %s", nm, x[[1]]), f_pp(x[[2]]), f_raw(x[[2]]))
   }
 }
