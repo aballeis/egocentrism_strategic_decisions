@@ -109,7 +109,8 @@ row <- function(label, cells) paste0("   ", paste(c(label, cells), collapse = " 
 pval_row <- function(label, vals, widths) row(label, map2_chr(vals, widths, \(v, w) cell(pval_parts(v), w)))
 
 write_reg_table <- function(models, term_map, file, dv_label, note_after_stats,
-                            stats_rows = NULL, pval_rows = NULL, pval_title = NULL, width = "\\linewidth") {
+                            stats_rows = NULL, pval_rows = NULL, pval_title = NULL, width = "\\linewidth",
+                            group_header = NULL) {
   n <- length(models)
   widths <- column_widths(models, term_map, pval_rows)
   note <- "$^{*}p<.10$, $^{**}p<.05$, $^{***}p<.01$."
@@ -132,7 +133,7 @@ write_reg_table <- function(models, term_map, file, dv_label, note_after_stats,
   writeLines(c(
     "\\begingroup", "\\centering",
     paste0("\\begin{tabular*}{", width, "}{@{\\extracolsep{\\fill}}l", strrep("c", n), "}"),
-    "   \\toprule",
+    "   \\toprule", group_header,
     paste0("   ", dv_label, " & ", paste0("\\multicolumn{1}{c}{(", seq_len(n), ")}", collapse = " & "), "\\\\"),
     "   \\midrule",
     body, footer,
@@ -286,8 +287,17 @@ term_map_class <- c(
 )
 
 hetero_classif <- hetero %>%
+  left_join(to_analyze %>% group_by(subject_id) %>% summarise(lost = sum(exp_score_lost)), by = "subject_id") %>%
   mutate(payoff_optimizer = as.integer(opt_all > 22),
          own_score_optimizer = as.integer(ego_all > 17))
+
+perf_models <- map(c("opt_all", "lost"), \(dv) map(c("educ_rank_c", "crt_c", "numeracy_c", "educ_rank_c + crt_c + numeracy_c"),
+  \(x) feols(as.formula(paste(dv, "~ draw_mode +", x)), data = hetero_classif, vcov = "hetero")))
+write_reg_table(list_flatten(perf_models), term_map_class, file.path(main_dir, "tab_perf_mod.tex"),
+                "", note_after_stats = TRUE,
+                group_header = c("   DV: & \\multicolumn{4}{c}{Optimal choices} & \\multicolumn{4}{c}{Points lost}\\\\",
+                                 "   \\cmidrule(lr){2-5}\\cmidrule(lr){6-9}"),
+                stats_rows = row("Observations", rep(fmt_int(nrow(hetero_classif)), 8)))
 
 for (dv in c("payoff_optimizer", "own_score_optimizer")) {
   models <- map(c("educ_rank_c", "crt_c", "numeracy_c", "educ_rank_c + crt_c + numeracy_c"),

@@ -248,7 +248,7 @@ ind <- participants %>%
 for (v in c("educ_rank_c", "crt_c", "numeracy_c")) {
   for (dv in c("payoff_optimizer", "opt_all", "lost", "own_score_optimizer")) {
     s <- lc(feols(as.formula(paste(dv, "~ draw_mode +", v)), data = ind, vcov = "hetero"), setNames(1, v))
-    add("Moderation", "Results, Individual differences; SI Tables 10, 11",
+    add("Moderation", "Results, Individual differences; SI Tables 10, 11, 12",
         sprintf("%s predicting %s (participant level, hetero SEs)", v, dv), sprintf("b = %.3f, t(%d) = %.2f, %s", s$est, s$df, s$t, f_p(s$p)))
   }
 }
@@ -257,7 +257,7 @@ rg <- map_chr(1:6, \(g) {
   m <- fe_reg(error ~ category*draw_mode + action_game_type | subject_id, filter(to_analyze, round_grp_within == g))
   sprintf("pair %d: ego %s, focal %s", g, f_p(lc(m, setNames(c(1, .5), c(L, LG)))$p), f_p(lc(m, setNames(1, LG))$p))
 })
-add("Moderation", "Results, Learning (SI Table 12)", "Egocentrism / focalism by round pair", paste(rg, collapse = "; "))
+add("Moderation", "Results, Learning (SI Table 13)", "Egocentrism / focalism by round pair", paste(rg, collapse = "; "))
 
 fig7_n <- to_analyze %>%
   filter(!is.na(focal_works)) %>%
@@ -267,9 +267,9 @@ fig7_n <- to_analyze %>%
 add("Moderation", "Supp. Fig. 13 caption", "Point sizes (N per round number and line)", sprintf("N = %d to N = %d", min(fig7_n$n), max(fig7_n$n)))
 
 rt <- fe_reg(time_to_decide ~ category*draw_mode + action_game_type | subject_id + round_grp_number)
-add("Moderation", "Methods, Regression analyses; SI Table 13", "Participants choosing the payoff-maximizing pod in all 24 rounds",
+add("Moderation", "Methods, Regression analyses; SI Table 14", "Participants choosing the payoff-maximizing pod in all 24 rounds",
     sprintf("%d participants", n_distinct(to_analyze$subject_id[to_analyze$always_opt])))
-add("Moderation", "SI Table 13", "Response time, full sample: Least / Coop / Least x Give / egocentrism",
+add("Moderation", "SI Table 14", "Response time, full sample: Least / Coop / Least x Give / egocentrism",
     paste(c(f_p(lc(rt, setNames(1, L))$p), f_p(lc(rt, action_game_typecooperative = 1)$p), f_p(lc(rt, setNames(1, LG))$p),
             f_p(lc(rt, setNames(c(1, .5), c(L, LG)))$p)), collapse = " / "))
 

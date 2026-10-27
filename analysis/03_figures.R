@@ -41,7 +41,7 @@ estimate <- function(d, v, balanced) {
 
 summarise_bars <- function(d, balanced = FALSE) {
   d %>%
-    group_by(x_lab) %>%
+    group_by(x_lab, fill) %>%
     group_modify(\(g, k) {
       err <- estimate(g, "error", balanced)
       tibble(error_rate = err[["est"]], error_lo = err[["lo"]], error_hi = err[["hi"]])
@@ -49,16 +49,12 @@ summarise_bars <- function(d, balanced = FALSE) {
     ungroup()
 }
 
-own_vs_other <- function(df, other_label) {
+own_vs_other <- function(df) {
   df %>%
     filter(category %in% c("ego_opt", "other_opt")) %>%
-    mutate(x_lab = if_else(category == "ego_opt", "Own", other_label))
+    mutate(x_lab = if_else(category == "ego_opt", "More", "Less"),
+           fill = if_else(category == "ego_opt", "#B30000", "#1E4B9B"))
 }
-
-bar_palette <- c(
-  "Own" = "#B30000", "Computer Player's" = "#1E4B9B", "Opponent's" = "#1E4B9B",
-  "Teammate's" = "#1E4B9B", "Focal Player's" = "#E69F00", "Non-Focal Player's" = "#00BFC4"
-)
 
 bar_theme <- theme_minimal(base_size = 12) +
   theme(
@@ -78,13 +74,13 @@ bar_theme <- theme_minimal(base_size = 12) +
 
 bar_plot <- function(df, ylab = NULL) {
   df <- df %>%
-    arrange(x_lab != "Own", x_lab != "Focal Player's", x_lab) %>%
+    arrange(x_lab != "More") %>%
     mutate(x = seq_len(n()))
-  ggplot(df, aes(x = x, y = error_rate, fill = x_lab)) +
+  ggplot(df, aes(x = x, y = error_rate, fill = fill)) +
     geom_col(width = 0.30) +
     geom_errorbar(aes(ymin = error_lo, ymax = error_hi),
                   width = 0.05, linewidth = 0.5, color = "black") +
-    scale_fill_manual(values = bar_palette) +
+    scale_fill_identity() +
     scale_x_continuous(limits = c(0.55, nrow(df) + 0.45), breaks = df$x, labels = df$x_lab, expand = c(0, 0)) +
     scale_y_continuous(breaks = seq(0, 1, 0.25), labels = c("0.00", "0.25", "0.50", "0.75", "1.00"), expand = c(0, 0)) +
     coord_cartesian(ylim = c(0, 1), expand = FALSE, clip = "on") +
@@ -92,38 +88,40 @@ bar_plot <- function(df, ylab = NULL) {
     bar_theme
 }
 
-three_panel_page <- function(panels, titles) {
-  cols <- imap(panels, \(p, i) ggplotGrob(bar_plot(p, if (i == 1) "Error Rate")))
+own_axis <- "How choice impacts own score (relative to computer player's score)"
+
+three_panel_page <- function(panels, titles, x_titles = own_axis) {
+  cols <- imap(panels, \(p, i) ggplotGrob(bar_plot(p, if (i == 1) "Error rate")))
   bold <- \(s, size) gpar(fontsize = size, fontface = "bold")
   heads <- unlist(map2(c("a.", "b.", "c."), titles, \(l, t) list(
     textGrob(l, x = 0.02, y = 0.95, hjust = 0, vjust = 1, gp = bold(l, 15)),
     textGrob(t, gp = bold(t, 14)))), recursive = FALSE)
   arrangeGrob(
-    grobs = c(heads, cols, list(textGrob("Score That Participant's Choice Impacts Most", gp = bold("", 14)))),
-    layout_matrix = rbind(1:6, c(7, 7, 8, 8, 9, 9), rep(10, 6)),
+    grobs = c(heads, cols, map(x_titles, \(t) textGrob(t, gp = bold(t, 14)))),
+    layout_matrix = rbind(1:6, c(7, 7, 8, 8, 9, 9), if (length(x_titles) == 1) rep(10, 6) else c(10, 10, 11, 11, 11, 11)),
     widths = unit(c(0.08, 1, 0.08, 1, 0.08, 1), "null"),
-    heights = unit(c(0.16, 1, 0.14), "null"),
+    heights = unit(c(0.16, 1, if (length(x_titles) == 1) 0.14 else 0.22), "null"),
     padding = unit(0.3, "line")
   )
 }
 
 fig2_ego <- function(df) {
   three_panel_page(list(
-    summarise_bars(own_vs_other(df, "Computer Player's"), balanced = TRUE),
-    summarise_bars(own_vs_other(filter(df, action_game_type == "adversarial"), "Opponent's"), balanced = TRUE),
-    summarise_bars(own_vs_other(filter(df, action_game_type == "cooperative"), "Teammate's"), balanced = TRUE)
+    summarise_bars(own_vs_other(df), balanced = TRUE),
+    summarise_bars(own_vs_other(filter(df, action_game_type == "adversarial")), balanced = TRUE),
+    summarise_bars(own_vs_other(filter(df, action_game_type == "cooperative")), balanced = TRUE)
   ), c("All", "Adversarial", "Cooperative"))
 }
 
 fig3_focal <- function(df) {
   focal <- df %>%
     filter(!is.na(focal_works)) %>%
-    mutate(x_lab = if_else(focal_works, "Focal Player's", "Non-Focal Player's"))
+    mutate(x_lab = if_else(focal_works, "More", "Less"), fill = if_else(focal_works, "#E69F00", "#00BFC4"))
   three_panel_page(list(
     summarise_bars(focal),
-    summarise_bars(own_vs_other(filter(df, draw_mode == "take"), "Computer Player's")),
-    summarise_bars(own_vs_other(filter(df, draw_mode == "give"), "Computer Player's"))
-  ), c("All", "Take", "Give"))
+    summarise_bars(own_vs_other(filter(df, draw_mode == "take"))),
+    summarise_bars(own_vs_other(filter(df, draw_mode == "give")))
+  ), c("All", "Take", "Give"), c("How choice impacts focal score\n(relative to non-focal score)", own_axis))
 }
 
 save_grob <- function(g, file) {
@@ -160,8 +158,8 @@ diamond_plot <- function(counts, panel_name) {
                  arrow = arrow(ends = "both", length = unit(0.16, "inches")), linewidth = 0.6) +
     geom_segment(data = tibble(x = half, xend = half, y = -3.8, yend = -2.2), aes(x = x, xend = xend, y = y, yend = yend),
                  linewidth = 0.6) +
-    annotate("text", x = 0, y = -4.25, label = "Always Computer's", hjust = 0, size = 3.5) +
-    annotate("text", x = total, y = -4.25, label = "Always Their Own", hjust = 1, size = 3.5) +
+    annotate("text", x = 0, y = -4.25, label = "Always computer's", hjust = 0, size = 3.5) +
+    annotate("text", x = total, y = -4.25, label = "Always their own", hjust = 1, size = 3.5) +
     annotate("text", x = half, y = total + 0.9, label = panel_name, fontface = "bold", size = 5) +
     geom_point(data = d, aes(x = ego_all, y = errors, size = n), alpha = 0.75, color = "#5A2A83") +
     scale_size_area(max_size = 8, guide = "none") +
@@ -176,7 +174,7 @@ diamond_plot <- function(counts, panel_name) {
       geom_segment(data = tibble(x = -1.8, xend = -1.8, y = 0, yend = total), aes(x = x, xend = xend, y = y, yend = yend), linewidth = 0.6) +
       geom_segment(data = y_ticks, aes(x = x, xend = xend, y = y, yend = y), linewidth = 0.5) +
       geom_text(data = y_ticks, aes(x = x - 0.25, y = y, label = lab), hjust = 1, vjust = 0.5, size = 3.2) +
-      annotate("text", x = -4.3, y = half, label = "Number of Errors", angle = 90, fontface = "bold", size = 5)
+      annotate("text", x = -4.3, y = half, label = "Number of errors", angle = 90, fontface = "bold", size = 5)
   }
   p
 }
@@ -184,7 +182,7 @@ diamond_plot <- function(counts, panel_name) {
 fig5_hetero <- function(df) {
   counts <- diamond_counts(df)
   x_lab <- ggplot() +
-    annotate("text", x = 0.5, y = 1, label = "Subobjective Score Participant Optimized", fontface = "bold", size = 5) +
+    annotate("text", x = 0.5, y = 1, label = "Subobjective score participant optimized", fontface = "bold", size = 5) +
     coord_cartesian(xlim = c(0, 1), ylim = c(0.99, 1.01), expand = FALSE, clip = "off") +
     theme_void() +
     theme(plot.margin = margin(10, 0, 8, 0))
@@ -195,8 +193,8 @@ fig5_hetero <- function(df) {
 
 # ---- Error rate by stimulus features and round (Figures 4, 6) ----
 
-line_levels <- c("Choice Impacts Own Score Most", "Choice Impacts Computer's Score Most",
-                 "Own Score is Salient", "Computer's Score is Salient")
+line_levels <- c("Choice impacts own score more\nthan computer's score", "Choice impacts own score less\nthan computer's score",
+                 "Own score is focal", "Computer's score is focal")
 line_palette <- setNames(c("#B30000", "#1E4B9B", "#E69F00", "#00BFC4"), line_levels)
 
 # Each round counts once toward its category line and once toward its salience line
@@ -252,12 +250,12 @@ fig4_stimuli <- function(df) {
     scale_x_continuous(limits = c(1, max_cost), breaks = seq(1, max_cost, by = 1), expand = c(0.02, 0.02)) +
     scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, 0.25), labels = c("0.00", "0.25", "0.50", "0.75", "1.00"),
                        expand = c(0.005, 0.005)) +
-    labs(x = "Points Lost if Error", y = "Error Rate", tag = "a") +
+    labs(x = "Points lost if error", y = "Error rate", tag = "a") +
     fig4_theme + fig4_legend
   p_dots <- line_plot(error_by(df, "dots_on_screen"), c(0.8, 2.6)) +
     scale_x_continuous(breaks = c(12, 18, 24), labels = c("12", "18", "24"), expand = c(0.02, 0.02)) +
     scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, 0.25), expand = c(0.005, 0.005)) +
-    labs(x = "Total Dots on Screen", y = NULL, tag = "b") +
+    labs(x = "Total dots on screen", y = NULL, tag = "b") +
     fig4_theme + theme(axis.title.y = element_blank()) + fig4_legend
   (p_cost + p_dots) + plot_layout(ncol = 2, guides = "collect") & theme(legend.position = "bottom")
 }
@@ -268,13 +266,14 @@ fig6_learning <- function(df) {
     scale_x_continuous(breaks = sort(unique(d$x)), expand = c(0.02, 0.02)) +
     scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, 0.25), labels = c("0.00", "0.25", "0.50", "0.75", "1.00"),
                        expand = c(0.01, 0.01)) +
-    labs(x = "Round Number", y = "Error Rate") +
+    labs(x = "Round number", y = "Error rate") +
     line_theme +
     theme(
       legend.position = "right",
       legend.direction = "vertical",
       legend.margin = margin(0, 0, 0, 0),
       legend.box.margin = margin(0, 0, 0, 4),
+      legend.key.spacing.y = unit(8, "pt"),
       axis.title.x = element_text(face = "bold", size = 14, margin = margin(t = 8, b = 8)),
       plot.margin = margin(4, 4, 2, 4),
       aspect.ratio = 0.43
@@ -284,7 +283,7 @@ fig6_learning <- function(df) {
 
 # ---- Error rate by the aggregate score from maximizing own score (Fig. 6; focal version Supplementary Fig. 14) ----
 
-focal_palette <- setNames(unname(line_palette[3:4]), c("Choice Impacts Focal Score Most", "Choice Impacts Non-Focal Score Most"))
+focal_palette <- setNames(unname(line_palette[3:4]), c("Choice impacts focal score more\nthan non-focal score", "Choice impacts focal score less\nthan non-focal score"))
 
 satisficing_panel <- function(df, role, x_lab, tag, xvar = "exp_score_ego", focal = FALSE) {
   pal <- if (focal) focal_palette else line_palette[1:2]
@@ -306,21 +305,21 @@ satisficing_panel <- function(df, role, x_lab, tag, xvar = "exp_score_ego", foca
     scale_x_continuous(breaks = scales::breaks_width(2), expand = c(0.03, 0.03)) +
     scale_y_continuous(breaks = seq(0, 1, 0.25), labels = c("0.00", "0.25", "0.50", "0.75", "1.00"), expand = c(0, 0)) +
     coord_cartesian(ylim = c(0, 1)) +
-    labs(x = x_lab, y = if (tag == "a") "Error Rate" else NULL, title = str_to_title(role), tag = tag) +
+    labs(x = x_lab, y = if (tag == "a") "Error rate" else NULL, title = str_to_title(role), tag = tag) +
     fig4_theme +
     theme(plot.title = element_text(face = "bold", size = 13, hjust = 0.5)) +
     guides(color = guide_legend(nrow = 1, override.aes = list(size = 3.0, alpha = 1)))
 }
 
 fig_satisficing <- function(df) {
-  (satisficing_panel(df, "adversarial", "Score Difference if Own Score Is Maximized", "a") +
-     satisficing_panel(df, "cooperative", "Score Sum if Own Score Is Maximized", "b")) +
+  (satisficing_panel(df, "adversarial", "Score difference if own score is maximized", "a") +
+     satisficing_panel(df, "cooperative", "Score sum if own score is maximized", "b")) +
     plot_layout(ncol = 2, guides = "collect") & theme(legend.position = "bottom")
 }
 
 fig_satisficing_focal <- function(df) {
-  (satisficing_panel(df, "adversarial", "Score Difference if Focal Score Is Optimized", "a", "exp_score_focal", TRUE) +
-     satisficing_panel(df, "cooperative", "Score Sum if Focal Score Is Optimized", "b", "exp_score_focal", TRUE)) +
+  (satisficing_panel(df, "adversarial", "Score difference if focal score is optimized", "a", "exp_score_focal", TRUE) +
+     satisficing_panel(df, "cooperative", "Score sum if focal score is optimized", "b", "exp_score_focal", TRUE)) +
     plot_layout(ncol = 2, guides = "collect") & theme(legend.position = "bottom")
 }
 
