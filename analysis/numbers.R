@@ -115,8 +115,6 @@ add("Main", "Table 2 caption; Results, Focalism", "Focalism test (reg. 1, b3)", 
 add("Main", "Table 2 caption", "Egocentrism test p-value (reg. 1)", f_p(ego$p))
 add("Main", "Intro; Results, Focalism (Fig. 3b)", "Take gap (reg. 1, b1)", f_pp(take_gap), f_raw(take_gap))
 add("Main", "Intro; Results, Focalism (Fig. 3c); Discussion", "Give gap (reg. 1, b1 + b3)", f_pp(give_gap), f_raw(give_gap))
-give_focal <- lc(reg1, setNames(c(-1, -1), c(L, LG)))
-add("Main", "Results, Focalism (Fig. 3c)", "Give gap, focal direction (focal-less minus focal-more = -(b1 + b3))", f_pp(give_focal), f_raw(give_focal))
 
 err_rates <- to_analyze %>% group_by(draw_mode) %>% summarise(rate = mean(error))
 tg <- feols(error ~ draw_mode, data = to_analyze, cluster = ~subject_id)
