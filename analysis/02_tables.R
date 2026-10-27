@@ -113,7 +113,7 @@ write_reg_table <- function(models, term_map, file, dv_label, note_after_stats,
                             group_header = NULL) {
   n <- length(models)
   widths <- column_widths(models, term_map, pval_rows)
-  note <- "$^{*}p<.10$, $^{**}p<.05$, $^{***}p<.01$."
+  note <- "$^{*}$\\textit{p} < .10, $^{**}$\\textit{p} < .05, $^{***}$\\textit{p} < .01."
 
   body <- unlist(map(names(term_map), \(term) {
     rr <- map(models, coef_row, term = term)
