@@ -90,17 +90,17 @@ bar_plot <- function(df, ylab = NULL) {
 
 own_axis <- "How choice impacts own score (relative to computer player's score)"
 
-three_panel_page <- function(panels, titles, x_titles = own_axis) {
+three_panel_page <- function(panels, titles, x_title = own_axis) {
   cols <- imap(panels, \(p, i) ggplotGrob(bar_plot(p, if (i == 1) "Error rate")))
   bold <- \(s, size) gpar(fontsize = size, fontface = "bold")
   heads <- unlist(map2(c("a.", "b.", "c."), titles, \(l, t) list(
     textGrob(l, x = 0.02, y = 0.95, hjust = 0, vjust = 1, gp = bold(l, 15)),
     textGrob(t, gp = bold(t, 14)))), recursive = FALSE)
   arrangeGrob(
-    grobs = c(heads, cols, map(x_titles, \(t) textGrob(t, gp = bold(t, 14)))),
-    layout_matrix = rbind(1:6, c(7, 7, 8, 8, 9, 9), if (length(x_titles) == 1) rep(10, 6) else c(10, 10, 11, 11, 11, 11)),
+    grobs = c(heads, cols, list(textGrob(x_title, gp = bold("", 14)))),
+    layout_matrix = rbind(1:6, c(7, 7, 8, 8, 9, 9), rep(10, 6)),
     widths = unit(c(0.08, 1, 0.08, 1, 0.08, 1), "null"),
-    heights = unit(c(0.16, 1, if (length(x_titles) == 1) 0.14 else 0.22), "null"),
+    heights = unit(c(0.16, 1, 0.14), "null"),
     padding = unit(0.3, "line")
   )
 }
@@ -119,9 +119,9 @@ fig3_focal <- function(df) {
     mutate(x_lab = if_else(focal_works, "More", "Less"), fill = if_else(focal_works, "#E69F00", "#00BFC4"))
   three_panel_page(list(
     summarise_bars(focal),
-    summarise_bars(own_vs_other(filter(df, draw_mode == "take"))),
-    summarise_bars(own_vs_other(filter(df, draw_mode == "give")))
-  ), c("All", "Take", "Give"), c("How choice impacts focal score\n(relative to non-focal score)", own_axis))
+    summarise_bars(filter(focal, draw_mode == "take")),
+    summarise_bars(filter(focal, draw_mode == "give"))
+  ), c("All", "Take", "Give"), "How choice impacts focal score (relative to non-focal score)")
 }
 
 save_grob <- function(g, file) {
@@ -236,6 +236,7 @@ fig4_theme <- line_theme +
     legend.direction = "horizontal",
     legend.margin = margin(t = -2, r = 0, b = -4, l = 0),
     legend.box.margin = margin(t = -2, r = 0, b = -4, l = 0),
+    legend.key.spacing.x = unit(40, "pt"),
     axis.title.x = element_text(face = "bold", size = 14, margin = margin(t = 4, b = 0)),
     plot.margin = margin(0, 2, -6, 2),
     aspect.ratio = 0.42,

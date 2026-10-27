@@ -35,6 +35,7 @@ Linear combinations use t(clusters - 1); round-level models cluster by subject_i
 | Table 2 caption | Egocentrism test p-value (reg. 1) | p < .001 |  |
 | Intro; Results, Focalism (Fig. 3b) | Take gap (reg. 1, b1) | 30 pp (95% CI [24, 36], t(245) = 10.25, p < .001) | est = 0.2999, SE = 0.0292 |
 | Intro; Results, Focalism (Fig. 3c); Discussion | Give gap (reg. 1, b1 + b3) | 3 pp (95% CI [-2, 9], t(245) = 1.27, p = .205) | est = 0.0336, SE = 0.0264 |
+| Results, Focalism (Fig. 3c) | Give gap, focal direction (focal-less minus focal-more = -(b1 + b3)) | -3 pp (95% CI [-9, 2], t(245) = -1.27, p = .205) | est = -0.0336, SE = 0.0264 |
 | Results, Focalism | Overall error rate, Give / Take | Give 24.5%, Take 24.8% | Give = 0.2446, Take = 0.2483 |
 | Results, Focalism | Overall error rate, Give - Take (round level, clustered by subject) | -0.4 pp (95% CI [-4.9, 4.2], t(245) = -0.16, p = .873) | est = -0.0037, SE = 0.0230 |
 | Results, Focalism | Give framing effect on gap, Coop vs Adv (Table 1 reg. 3, b6) | 1 pp (95% CI [-11, 14], t(245) = 0.22, p = .828) | est = 0.0141, SE = 0.0645 |
