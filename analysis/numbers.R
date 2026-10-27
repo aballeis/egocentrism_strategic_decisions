@@ -111,6 +111,13 @@ add("Main", "Intro; Results, Egocentrism (Fig. 2b,c)", "Egocentrism gap, Coopera
 add("Main", "Results, Focalism (Fig. 3a)", "Focal vs non-focal error rate", f_pp(foc_fw), f_raw(foc_fw))
 add("Main", "Results, Evidence of focalism", "Non-focal minus focal error rate (Take-Least, Give-Most vs Take-Most, Give-Least)", f_pp(lc(foc, focal_works = -1)), f_raw(lc(foc, focal_works = -1)))
 add("Main", "Results, Evidence of focalism", "Non-focal minus focal points lost per round", f_pts(lc(foc_lost, focal_works = -1)), f_raw(lc(foc_lost, focal_works = -1)))
+ego_base <- to_analyze %>% group_by(draw_mode, category) %>% summarise(lost = mean(exp_score_lost), .groups = "drop") %>%
+  group_by(category) %>% summarise(lost = mean(lost)) %>% deframe()
+foc_base <- to_analyze %>% filter(!is.na(focal_works)) %>% group_by(focal_works) %>% summarise(lost = mean(exp_score_lost)) %>% deframe()
+add("Main", "Results, Egocentrism", "Points lost per round, own score secondary vs primary (Take/Give equally weighted)",
+    sprintf("%.2f vs. %.2f (%s increase)", ego_base[["other_opt"]], ego_base[["ego_opt"]], f_pct(ego_base[["other_opt"]] / ego_base[["ego_opt"]] - 1)))
+add("Main", "Results, Evidence of focalism", "Points lost per round, focal score secondary vs primary",
+    sprintf("%.2f vs. %.2f (%s increase)", foc_base[["0"]], foc_base[["1"]], f_pct(foc_base[["0"]] / foc_base[["1"]] - 1)))
 add("Main", "Table 2 caption; Results, Focalism", "Focalism test (reg. 1, b3)", f_pp(focal_b3), f_raw(focal_b3))
 add("Main", "Table 2 caption", "Egocentrism test p-value (reg. 1)", f_p(ego$p))
 add("Main", "Intro; Results, Focalism (Fig. 3b)", "Take gap (reg. 1, b1)", f_pp(take_gap), f_raw(take_gap))
