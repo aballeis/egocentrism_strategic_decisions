@@ -81,7 +81,7 @@ CSV_COLUMNS = DOT_COLS + CATEGORY_COLS
 def stimulus_file(game_type: str, draw_is_take: int) -> tuple[str, str]:
     mode = "take" if draw_is_take else "give"
     game = "adv" if game_type == "adversarial" else "coop"
-    fname = os.path.join(CSV_DIR, f"draft_sample{N_PODS}_{mode}_{game}.csv")
+    fname = os.path.join(CSV_DIR, f"samples_{mode}_{game}.csv")
     if not os.path.exists(fname):
         abort(500, f"Missing CSV on server: {fname}")
     return fname, f"category_{game}_{mode}"

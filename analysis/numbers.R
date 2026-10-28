@@ -76,7 +76,7 @@ add("Sample", "Methods, Participants", "Consented / returned / incomplete (294 /
 
 pools <- map_dfr(c("take_adv", "give_adv", "take_coop", "give_coop"), \(p) {
   parts <- strsplit(p, "_")[[1]]
-  read_csv(file.path("interface/stimuli", paste0("draft_sample2_", p, ".csv")), show_col_types = FALSE) %>%
+  read_csv(file.path("interface/stimuli", paste0("samples_", p, ".csv")), show_col_types = FALSE) %>%
     summarise(pool = p, n = n(), most = sum(.data[[paste0("category_", parts[2], "_", parts[1])]] == "ego_opt"))
 })
 add("Sample", "Methods, Generation of Pods-and-Dots stimuli", "Own-score-primary stimuli per pool (range)",
