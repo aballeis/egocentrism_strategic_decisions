@@ -289,7 +289,7 @@ add("Satisficing", "Results, Satisficing; Methods, Regression analyses", "Respon
     sprintf("%.1f seconds faster (%.1f vs. %.1f seconds, 95%% CI [%.2f, %.2f], t(%d) = %.2f, %s)", sat_s$est, sat_base + coef(sat_m)[["posTRUE"]], sat_base,
             sat_s$lo, sat_s$hi, sat_s$df, sat_s$t, f_p(sat_s$p)), f_raw(sat_s))
 add("Satisficing", "Methods, Regression analyses", "Response time, unadjusted means (positive vs negative)",
-    sprintf("%.1f vs. %.1f seconds (difference %.1f seconds)", sat_raw[["TRUE"]], sat_raw[["FALSE"]], sat_raw[["FALSE"]] - sat_raw[["TRUE"]]))
+    sprintf("%.1f second difference (%.1f seconds when positive, %.1f seconds when negative)", sat_raw[["FALSE"]] - sat_raw[["TRUE"]], sat_raw[["TRUE"]], sat_raw[["FALSE"]]))
 
 # ---- Robustness samples ----
 

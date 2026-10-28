@@ -106,7 +106,7 @@ Linear combinations use t(clusters - 1); round-level models cluster by subject_i
 | Location | Statistic | Value | Unrounded |
 |---|---|---|---|
 | Results, Satisficing; Methods, Regression analyses | Response time, Adversarial, own-score difference positive vs negative (participant + round-block FE) | 1.2 seconds faster (6.4 vs. 7.6 seconds, 95% CI [0.56, 1.83], t(245) = 3.71, p < .001) | est = 1.1973, SE = 0.3224 |
-| Methods, Regression analyses | Response time, unadjusted means (positive vs negative) | 6.3 vs. 7.7 seconds (difference 1.5 seconds) |  |
+| Methods, Regression analyses | Response time, unadjusted means (positive vs negative) | 1.5 second difference (6.3 seconds when positive, 7.7 seconds when negative) |  |
 
 ## Robustness
 
