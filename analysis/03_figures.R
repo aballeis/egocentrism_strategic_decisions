@@ -195,8 +195,8 @@ fig5_hetero <- function(df) {
 
 # ---- Error rate by stimulus features and round (Figures 4, 6) ----
 
-line_levels <- c("Choice impacts own score more\nthan computer's score", "Choice impacts own score less\nthan computer's score",
-                 "Own score is focal", "Computer's score is focal")
+line_levels <- c("Own score of primary importance", "Own score of secondary importance",
+                 "Focal score of primary importance", "Focal score of secondary importance")
 line_palette <- setNames(c("#B30000", "#1E4B9B", "#E69F00", "#00BFC4"), line_levels)
 
 # Each round counts once toward its category line and once toward its salience line
@@ -286,7 +286,7 @@ fig6_learning <- function(df) {
 
 # ---- Error rate by the aggregate score from maximizing own score (Fig. 6; focal version Supplementary Fig. 14) ----
 
-focal_palette <- setNames(unname(line_palette[3:4]), c("Choice impacts focal score more\nthan non-focal score", "Choice impacts focal score less\nthan non-focal score"))
+focal_palette <- setNames(unname(line_palette[3:4]), line_levels[3:4])
 
 satisficing_panel <- function(df, role, x_lab, tag, xvar = "exp_score_ego", focal = FALSE) {
   pal <- if (focal) focal_palette else line_palette[1:2]
