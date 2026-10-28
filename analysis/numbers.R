@@ -103,9 +103,9 @@ coop_gap <- lc(reg2, setNames(c(1, 1, .5), c(L, LC, LG)))
 triple <- lc(reg3, setNames(1, LGC))
 lost <- lc(lost1, setNames(c(1, .5), c(L, LG)))
 
-add("Main", "Intro; Results, Egocentrism; Discussion", "Egocentrism gap (Table 1 reg. 1, b1 + b3/2)", f_pp(ego), f_raw(ego))
+add("Main", "Intro; Results, Egocentrism; Discussion", "Egocentrism gap (Table 2 reg. 1, b1 + b3/2)", f_pp(ego), f_raw(ego))
 add("Main", "Results, Egocentrism; SI Table 4", "Points lost per round (reg. 1, b1 + b3/2)", f_pts(lost), f_raw(lost))
-add("Main", "Results, Egocentrism", "Gap larger in Cooperative than Adversarial (Table 1 reg. 2, OwnScoreSecondary x Coop)", f_pp(coop_diff), f_raw(coop_diff))
+add("Main", "Results, Egocentrism", "Gap larger in Cooperative than Adversarial (Table 2 reg. 2, OwnScoreSecondary x Coop)", f_pp(coop_diff), f_raw(coop_diff))
 add("Main", "Intro; Results, Egocentrism (Fig. 2b,c)", "Egocentrism gap, Adversarial (reg. 2)", f_pp(adv_gap), f_raw(adv_gap))
 add("Main", "Intro; Results, Egocentrism (Fig. 2b,c)", "Egocentrism gap, Cooperative (reg. 2)", f_pp(coop_gap), f_raw(coop_gap))
 add("Main", "Results, Focalism (Fig. 3a)", "Focal vs non-focal error rate", f_pp(foc_fw), f_raw(foc_fw))
@@ -132,7 +132,7 @@ add("Main", "Results, Focalism", "Overall error rate, Give / Take",
 add("Main", "Results, Focalism", "Overall error rate, Give - Take (round level, clustered by subject)",
     sprintf("%.1f pp (95%% CI [%.1f, %.1f], t(%d) = %.2f, %s)", 100 * tg_diff$est, 100 * tg_diff$lo, 100 * tg_diff$hi, tg_diff$df, tg_diff$t, f_p(tg_diff$p)),
     f_raw(tg_diff))
-add("Main", "Results, Focalism", "Give framing effect on gap, Coop vs Adv (Table 1 reg. 3, b6)", f_pp(triple), f_raw(triple))
+add("Main", "Results, Focalism", "Give framing effect on gap, Coop vs Adv (Table 2 reg. 3, b6)", f_pp(triple), f_raw(triple))
 
 order_df <- to_analyze %>%
   group_by(subject_id) %>%
