@@ -68,5 +68,5 @@ for (game in c("adv_take", "coop_take", "adv_give", "coop_give")) {
   pool %>%
     filter(!.data[[paste0("category_", game)]] %in% c("neither_opt", "both_opt")) %>%
     slice_sample(n = 1000) %>%
-    write_csv(file.path(out_dir, paste0("draft_sample2_", parts[2], "_", parts[1], ".csv")))
+    write_csv(file.path(out_dir, paste0("samples_", parts[2], "_", parts[1], ".csv")))
 }
