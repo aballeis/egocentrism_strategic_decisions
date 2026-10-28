@@ -314,19 +314,18 @@ for (dv in c("payoff_optimizer", "own_score_optimizer")) {
 cells <- to_analyze %>%
   filter(category %in% c("ego_opt", "other_opt")) %>%
   group_by(draw_mode, action_game_type) %>%
-  summarise(n = n_distinct(subject_id),
-            most = mean(error[category == "ego_opt"]),
+  summarise(most = mean(error[category == "ego_opt"]),
             least = mean(error[category == "other_opt"]), .groups = "drop") %>%
   arrange(draw_mode, action_game_type)
 
 writeLines(c(
   "\\begingroup", "\\centering",
-  "\\begin{tabular*}{\\linewidth}{@{\\extracolsep{\\fill}}llcccc}",
+  "\\begin{tabular*}{\\linewidth}{@{\\extracolsep{\\fill}}llcc}",
   "   \\toprule",
-  "   Framing & Role & Primary & Secondary & Secondary $-$ Primary & Participants\\\\",
+  "   Framing & Role & Primary & Secondary\\\\",
   "   \\midrule",
-  pmap_chr(cells, \(draw_mode, action_game_type, n, most, least) row(
-    str_to_title(as.character(draw_mode)), c(str_to_title(as.character(action_game_type)), fmt_num(most), fmt_num(least), fmt_num(least - most), fmt_int(n)))),
+  pmap_chr(cells, \(draw_mode, action_game_type, most, least) row(
+    str_to_title(as.character(draw_mode)), c(str_to_title(as.character(action_game_type)), fmt_num(most), fmt_num(least)))),
   "   \\bottomrule", "\\end{tabular*}", "\\par\\endgroup"
 ), file.path(main_dir, "tab_cell_errors.tex"))
 mirror(file.path(main_dir, "tab_cell_errors.tex"))
