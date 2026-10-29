@@ -8,9 +8,9 @@ Linear combinations use t(clusters - 1); round-level models cluster by subject_i
 | Location | Statistic | Value | Unrounded |
 |---|---|---|---|
 | Intro; Results opening; Discussion | Participants / decisions / rounds each | 246 participants, 5,904 decisions, 24 rounds |  |
-| Results opening; SI Section 1 title and captions | Passed all comprehension checks on first try | 58.1% (143 participants) |  |
-| Fig. 2 caption; Supp. Fig. 6 caption | Participants per framing condition, full sample | Take N = 122, Give N = 124 |  |
-| Supp. Fig. 1 caption | Participants per framing condition, passed comprehension checks | Take N = 69, Give N = 74 |  |
+| Methods, Additional procedure details; SI Section 6 title and captions | Passed all comprehension checks on first try | 58.1% (143 participants) |  |
+| Fig. 2 caption; Supp. Fig. 10 caption | Participants per framing condition, full sample | Take N = 122, Give N = 124 |  |
+| Supp. Fig. 5 caption | Participants per framing condition, passed comprehension checks | Take N = 69, Give N = 74 |  |
 | Methods, Participants | Participants per cell (framing x first role) | take/adversarial-first = 62; take/cooperative-first = 60; give/adversarial-first = 63; give/cooperative-first = 61 |  |
 | Methods, Participants | Gender | 54% male, 44% female, 1% other (3) |  |
 | Methods, Participants | Race/ethnicity | White / Caucasian 75%; Black / African-American 11%; Asian / Asian-American 9%; Latino / Hispanic 4%; Multiple, mixed, or other 2% | White / Caucasian = 184; Black / African-American = 26; Asian / Asian-American = 21; Latino / Hispanic = 9; Multiple, mixed, or other = 6 |
@@ -24,7 +24,7 @@ Linear combinations use t(clusters - 1); round-level models cluster by subject_i
 | Location | Statistic | Value | Unrounded |
 |---|---|---|---|
 | Intro; Results, Egocentrism; Discussion | Egocentrism gap (Table 2 reg. 1, b1 + b3/2) | 17 pp (95% CI [13, 21], t(245) = 8.46, p < .001) | est = 0.1667, SE = 0.0197 |
-| Results, Egocentrism; SI Table 4 | Points lost per round (reg. 1, b1 + b3/2) | 0.36 points (95% CI [0.26, 0.45], t(245) = 7.43, p < .001) | est = 0.3572, SE = 0.0481 |
+| Results, Egocentrism; SI Table 2 | Points lost per round (reg. 1, b1 + b3/2) | 0.36 points (95% CI [0.26, 0.45], t(245) = 7.43, p < .001) | est = 0.3572, SE = 0.0481 |
 | Results, Egocentrism | Gap larger in Cooperative than Adversarial (Table 2 reg. 2, OwnScoreSecondary x Coop) | 5 pp (95% CI [-1, 12], t(245) = 1.62, p = .107) | est = 0.0522, SE = 0.0323 |
 | Intro; Results, Egocentrism (Fig. 2b,c) | Egocentrism gap, Adversarial (reg. 2) | 14 pp (95% CI [9, 19], t(245) = 5.77, p < .001) | est = 0.1406, SE = 0.0244 |
 | Intro; Results, Egocentrism (Fig. 2b,c) | Egocentrism gap, Cooperative (reg. 2) | 19 pp (95% CI [14, 25], t(245) = 7.26, p < .001) | est = 0.1928, SE = 0.0266 |
@@ -58,46 +58,46 @@ Linear combinations use t(clusters - 1); round-level models cluster by subject_i
 | Intro p1 (Adversarial) / p2 (Cooperative) | Cooperative rounds, pooled (all participants): own > 6 / computer > 6 | own 44%, computer 20% |  |
 | Intro p1 (Adversarial) / p2 (Cooperative) | Cooperative rounds, Take/Give equally weighted: own > 6 / computer > 6 | own 44%, computer 20% |  |
 | Results, Heterogeneity p3; Methods, Heterogeneity | Two-sided binomial p for > 17 of 24 | p = .023 | 0.0227 |
-| SI Table 5 caption | Two-sided binomial p for at least 10 of 12 | p = .039 | 0.0386 |
+| SI Table 3 caption | Two-sided binomial p for at least 10 of 12 | p = .039 | 0.0386 |
 | Results, Heterogeneity p3 | Take: consistent own / computer (> 17 of 24), binomial test | own 25%, computer 0% (31 vs 0, p < .001) |  |
 | Results, Heterogeneity p3 | Give: consistent own / computer (> 17 of 24) | own 8%, computer 4% |  |
 | Results, Heterogeneity p3 | Pooled: consistent own vs computer (binomial test) | 17% vs 2%, p < .001 | counts 41 vs 5 |
 | Results, Heterogeneity p3 | Pooled: consistent focal vs non-focal (binomial test) | 15% vs 4%, p < .001 | counts 36 vs 10 |
-| SI Table 6 caption | Self-report own vs computer (binomial test) | 38 vs 5, p < .001 | counts 38 vs 5 |
-| SI Table 6 caption | Self-report focal vs non-focal (binomial test) | 30 vs 13, p = .014 | counts 30 vs 13 |
-| SI Table 6 caption | Self-report, adv rounds: own vs computer; focal vs non-focal (raw counts, binomial) | 72 vs 20, p < .001; 44 vs 48, p = .755 |  |
-| SI Table 6 caption | Self-report, coop rounds: own vs computer; focal vs non-focal (raw counts, binomial) | 24 vs 19, p = .542; 22 vs 21, p = 1.000 |  |
-| SI Table 6 caption | Own-score pod share, self-report 'both', controlling for Take/Give | 56.4% (Take/Give equally weighted); 56.4% (regression-adjusted) |  |
-| SI Table 6 caption | Own-score pod share, self-report 'own', controlling for Take/Give | 69.3% (Take/Give equally weighted); 70.1% (regression-adjusted) |  |
+| SI Table 4 caption | Self-report own vs computer (binomial test) | 38 vs 5, p < .001 | counts 38 vs 5 |
+| SI Table 4 caption | Self-report focal vs non-focal (binomial test) | 30 vs 13, p = .014 | counts 30 vs 13 |
+| SI Table 4 caption | Self-report, adv rounds: own vs computer; focal vs non-focal (raw counts, binomial) | 72 vs 20, p < .001; 44 vs 48, p = .755 |  |
+| SI Table 4 caption | Self-report, coop rounds: own vs computer; focal vs non-focal (raw counts, binomial) | 24 vs 19, p = .542; 22 vs 21, p = 1.000 |  |
+| SI Table 4 caption | Own-score pod share, self-report 'both', controlling for Take/Give | 56.4% (Take/Give equally weighted); 56.4% (regression-adjusted) |  |
+| SI Table 4 caption | Own-score pod share, self-report 'own', controlling for Take/Give | 69.3% (Take/Give equally weighted); 70.1% (regression-adjusted) |  |
 
 ## Moderation
 
 | Location | Statistic | Value | Unrounded |
 |---|---|---|---|
 | Results, Error cost & complexity | Error cost: change in error rate per point at stake | -2.5 pp (95% CI [-3.2, -1.7], t(245) = -6.58, p < .001) | est = -0.0246, SE = 0.0037 |
-| Results, Error cost & complexity; Results, Learning; SI Table 7 caption | cost_c: overall error rate (SI Table 7) | b = -0.0246, t(245) = -6.58, p < .001 |  |
-| Results, Error cost & complexity; Results, Learning; SI Table 7 caption | cost_c: moderates egocentrism / focalism (SI Table 7) | egocentrism p = .438; focalism p = .349 |  |
-| Results, Error cost & complexity; Results, Learning; SI Table 7 caption | dots_c: overall error rate (SI Table 7) | b = 0.0010, t(245) = 0.87, p = .385 |  |
-| Results, Error cost & complexity; Results, Learning; SI Table 7 caption | dots_c: moderates egocentrism / focalism (SI Table 7) | egocentrism p = .099; focalism p = .260 |  |
-| Results, Error cost & complexity; Results, Learning; SI Table 7 caption | round_num_within_c: overall error rate (SI Table 7) | b = -0.0086, t(245) = -6.62, p < .001 |  |
-| Results, Error cost & complexity; Results, Learning; SI Table 7 caption | round_num_within_c: moderates egocentrism / focalism (SI Table 7) | egocentrism p = .122; focalism p = .003 |  |
-| Results, Individual differences; SI Table 8 caption | educ_rank_c: moderates egocentrism / focalism (SI Table 8) | egocentrism p = .624; focalism p = .092 |  |
-| Results, Individual differences; SI Table 8 caption | crt_c: moderates egocentrism / focalism (SI Table 8) | egocentrism p = .176; focalism p = .240 |  |
-| Results, Individual differences; SI Table 8 caption | numeracy_c: moderates egocentrism / focalism (SI Table 8) | egocentrism p = .742; focalism p = .033 |  |
-| Results, Individual differences; SI Tables 10, 11, 12 | educ_rank_c predicting payoff_optimizer (participant level, hetero SEs) | b = 0.072, t(243) = 2.82, p = .005 |  |
-| Results, Individual differences; SI Tables 10, 11, 12 | educ_rank_c predicting opt_all (participant level, hetero SEs) | b = 0.526, t(243) = 2.04, p = .043 |  |
-| Results, Individual differences; SI Tables 10, 11, 12 | educ_rank_c predicting lost (participant level, hetero SEs) | b = -1.070, t(243) = -1.77, p = .078 |  |
-| Results, Individual differences; SI Tables 10, 11, 12 | educ_rank_c predicting own_score_optimizer (participant level, hetero SEs) | b = -0.019, t(243) = -0.75, p = .457 |  |
-| Results, Individual differences; SI Tables 10, 11, 12 | crt_c predicting payoff_optimizer (participant level, hetero SEs) | b = 0.094, t(243) = 4.88, p < .001 |  |
-| Results, Individual differences; SI Tables 10, 11, 12 | crt_c predicting opt_all (participant level, hetero SEs) | b = 0.786, t(243) = 3.55, p < .001 |  |
-| Results, Individual differences; SI Tables 10, 11, 12 | crt_c predicting lost (participant level, hetero SEs) | b = -1.723, t(243) = -3.14, p = .002 |  |
-| Results, Individual differences; SI Tables 10, 11, 12 | crt_c predicting own_score_optimizer (participant level, hetero SEs) | b = -0.022, t(243) = -1.02, p = .310 |  |
-| Results, Individual differences; SI Tables 10, 11, 12 | numeracy_c predicting payoff_optimizer (participant level, hetero SEs) | b = 0.076, t(243) = 3.03, p = .003 |  |
-| Results, Individual differences; SI Tables 10, 11, 12 | numeracy_c predicting opt_all (participant level, hetero SEs) | b = 1.043, t(243) = 3.45, p < .001 |  |
-| Results, Individual differences; SI Tables 10, 11, 12 | numeracy_c predicting lost (participant level, hetero SEs) | b = -2.340, t(243) = -2.98, p = .003 |  |
-| Results, Individual differences; SI Tables 10, 11, 12 | numeracy_c predicting own_score_optimizer (participant level, hetero SEs) | b = -0.028, t(243) = -0.97, p = .332 |  |
-| Results, Learning (SI Table 13) | Egocentrism / focalism by round pair | pair 1: ego p < .001, focal p < .001; pair 2: ego p < .001, focal p < .001; pair 3: ego p < .001, focal p < .001; pair 4: ego p < .001, focal p = .002; pair 5: ego p < .001, focal p < .001; pair 6: ego p < .001, focal p < .001 |  |
-| Supp. Fig. 13 caption | Point sizes (N per round number and line) | N = 230 to N = 262 |  |
+| Results, Error cost & complexity; Results, Learning; SI Table 5 caption | cost_c: overall error rate (SI Table 5) | b = -0.0246, t(245) = -6.58, p < .001 |  |
+| Results, Error cost & complexity; Results, Learning; SI Table 5 caption | cost_c: moderates egocentrism / focalism (SI Table 5) | egocentrism p = .438; focalism p = .349 |  |
+| Results, Error cost & complexity; Results, Learning; SI Table 5 caption | dots_c: overall error rate (SI Table 5) | b = 0.0010, t(245) = 0.87, p = .385 |  |
+| Results, Error cost & complexity; Results, Learning; SI Table 5 caption | dots_c: moderates egocentrism / focalism (SI Table 5) | egocentrism p = .099; focalism p = .260 |  |
+| Results, Error cost & complexity; Results, Learning; SI Table 5 caption | round_num_within_c: overall error rate (SI Table 5) | b = -0.0086, t(245) = -6.62, p < .001 |  |
+| Results, Error cost & complexity; Results, Learning; SI Table 5 caption | round_num_within_c: moderates egocentrism / focalism (SI Table 5) | egocentrism p = .122; focalism p = .003 |  |
+| Results, Individual differences; SI Table 6 caption | educ_rank_c: moderates egocentrism / focalism (SI Table 6) | egocentrism p = .624; focalism p = .092 |  |
+| Results, Individual differences; SI Table 6 caption | crt_c: moderates egocentrism / focalism (SI Table 6) | egocentrism p = .176; focalism p = .240 |  |
+| Results, Individual differences; SI Table 6 caption | numeracy_c: moderates egocentrism / focalism (SI Table 6) | egocentrism p = .742; focalism p = .033 |  |
+| Results, Individual differences; SI Tables 8, 9, 10 | educ_rank_c predicting payoff_optimizer (participant level, hetero SEs) | b = 0.072, t(243) = 2.82, p = .005 |  |
+| Results, Individual differences; SI Tables 8, 9, 10 | educ_rank_c predicting opt_all (participant level, hetero SEs) | b = 0.526, t(243) = 2.04, p = .043 |  |
+| Results, Individual differences; SI Tables 8, 9, 10 | educ_rank_c predicting lost (participant level, hetero SEs) | b = -1.070, t(243) = -1.77, p = .078 |  |
+| Results, Individual differences; SI Tables 8, 9, 10 | educ_rank_c predicting own_score_optimizer (participant level, hetero SEs) | b = -0.019, t(243) = -0.75, p = .457 |  |
+| Results, Individual differences; SI Tables 8, 9, 10 | crt_c predicting payoff_optimizer (participant level, hetero SEs) | b = 0.094, t(243) = 4.88, p < .001 |  |
+| Results, Individual differences; SI Tables 8, 9, 10 | crt_c predicting opt_all (participant level, hetero SEs) | b = 0.786, t(243) = 3.55, p < .001 |  |
+| Results, Individual differences; SI Tables 8, 9, 10 | crt_c predicting lost (participant level, hetero SEs) | b = -1.723, t(243) = -3.14, p = .002 |  |
+| Results, Individual differences; SI Tables 8, 9, 10 | crt_c predicting own_score_optimizer (participant level, hetero SEs) | b = -0.022, t(243) = -1.02, p = .310 |  |
+| Results, Individual differences; SI Tables 8, 9, 10 | numeracy_c predicting payoff_optimizer (participant level, hetero SEs) | b = 0.076, t(243) = 3.03, p = .003 |  |
+| Results, Individual differences; SI Tables 8, 9, 10 | numeracy_c predicting opt_all (participant level, hetero SEs) | b = 1.043, t(243) = 3.45, p < .001 |  |
+| Results, Individual differences; SI Tables 8, 9, 10 | numeracy_c predicting lost (participant level, hetero SEs) | b = -2.340, t(243) = -2.98, p = .003 |  |
+| Results, Individual differences; SI Tables 8, 9, 10 | numeracy_c predicting own_score_optimizer (participant level, hetero SEs) | b = -0.028, t(243) = -0.97, p = .332 |  |
+| Results, Learning (SI Table 11) | Egocentrism / focalism by round pair | pair 1: ego p < .001, focal p < .001; pair 2: ego p < .001, focal p < .001; pair 3: ego p < .001, focal p < .001; pair 4: ego p < .001, focal p = .002; pair 5: ego p < .001, focal p < .001; pair 6: ego p < .001, focal p < .001 |  |
+| Supp. Fig. 3 caption | Point sizes (N per round number and line) | N = 230 to N = 262 |  |
 | Methods, Regression analyses; SI Table 14 | Participants choosing the payoff-maximizing pod in all 24 rounds | 33 participants |  |
 | SI Table 14 | Response time, full sample: OwnScoreSecondary / Coop / OwnScoreSecondary x Give / egocentrism | p = .154 / p < .001 / p = .604 / p = .272 |  |
 
