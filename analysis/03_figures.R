@@ -115,15 +115,15 @@ fig2_ego <- function(df) {
 }
 
 fig3_focal <- function(df) {
+  cols <- c("#E69F00", "#00BFC4")
   focal <- df %>%
     filter(!is.na(focal_works)) %>%
-    mutate(ord = if_else(focal_works, 1, 2), x_lab = if_else(focal_works, "Focal", "Non-focal"),
-           fill = if_else(focal_works, "#E69F00", "#00BFC4"))
-  three_panel_page(list(
-    summarise_bars(focal),
-    summarise_bars(own_vs_other(filter(df, draw_mode == "take"), c("Own\n(Focal)", "Computer's\n(Non-focal)"))),
-    summarise_bars(own_vs_other(filter(df, draw_mode == "give"), c("Own\n(Non-focal)", "Computer's\n(Focal)")))
-  ), c("All", "Take", "Give"), "Score of primary importance")
+    mutate(ord = if_else(focal_works, 1, 2), x_lab = if_else(focal_works, "Focal", "Non-focal"))
+  take <- own_vs_other(filter(df, draw_mode == "take"), c("Own\n(Focal)", "Computer's\n(Non-focal)"))
+  give <- own_vs_other(filter(df, draw_mode == "give"), c("Own\n(Non-focal)", "Computer's\n(Focal)")) %>%
+    mutate(ord = 3 - ord)
+  three_panel_page(map(list(focal, take, give), \(d) summarise_bars(mutate(d, fill = cols[ord]))),
+                   c("All", "Take", "Give"), "Score of primary importance")
 }
 
 save_grob <- function(g, file) {
@@ -284,7 +284,7 @@ fig6_learning <- function(df) {
     guides(color = guide_legend(nrow = 4, byrow = TRUE, override.aes = list(size = 3.0, alpha = 1)))
 }
 
-# ---- Error rate by the aggregate score from maximizing own score (Fig. 6; focal version Supplementary Fig. 14) ----
+# ---- Error rate by the aggregate score from maximizing own score (Fig. 6; focal version Supplementary Fig. 4) ----
 
 focal_palette <- setNames(unname(line_palette[3:4]), line_levels[3:4])
 
@@ -327,14 +327,14 @@ fig_satisficing_focal <- function(df) {
 }
 
 # ---- Write figures ----
-# File names match the draft's Overleaf: fig6_dots_dist = Fig. 5, fig_satisficing = Fig. 6, fig7_learn = Supplementary Fig. 13.
+# File names match the draft's Overleaf: fig6_dots_dist = Fig. 5, fig_satisficing = Fig. 6, fig7_learn = Supplementary Fig. 3.
 
 samps <- list(
   main          = to_analyze,
-  pass_comps    = to_analyze %>% filter(all_comps_one_try),                       # Supplementary Section 1
-  exclude_early = to_analyze %>% filter(!round_number %in% c(1, 2, 13, 14)),      # Supplementary Section 2
-  adv_only      = to_analyze %>% filter(action_game_type == "adversarial"),       # Supplementary Section 5
-  coop_only     = to_analyze %>% filter(action_game_type == "cooperative")        # Supplementary Section 5
+  pass_comps    = to_analyze %>% filter(all_comps_one_try),                       # Supplementary Section 6
+  exclude_early = to_analyze %>% filter(!round_number %in% c(1, 2, 13, 14)),      # Supplementary Section 7
+  adv_only      = to_analyze %>% filter(action_game_type == "adversarial"),       # Supplementary Section 3
+  coop_only     = to_analyze %>% filter(action_game_type == "cooperative")        # Supplementary Section 3
 )
 
 save_gg <- function(p, file, w, h) {
