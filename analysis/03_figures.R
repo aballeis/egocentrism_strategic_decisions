@@ -118,12 +118,12 @@ fig3_focal <- function(df) {
   cols <- c("#E69F00", "#00BFC4")
   focal <- df %>%
     filter(!is.na(focal_works)) %>%
-    mutate(ord = if_else(focal_works, 1, 2), x_lab = if_else(focal_works, "Focal", "Non-focal"))
-  take <- own_vs_other(filter(df, draw_mode == "take"), c("Own\n(Focal)", "Computer's\n(Non-focal)"))
+    mutate(ord = if_else(focal_works, 1, 2), x_lab = if_else(focal_works, "Focal", "Non-focal"), fill = cols[ord])
+  take <- own_vs_other(filter(df, draw_mode == "take"), c("Own\n(Focal)", "Computer's\n(Non-focal)")) %>%
+    mutate(fill = cols[ord])
   give <- own_vs_other(filter(df, draw_mode == "give"), c("Own\n(Non-focal)", "Computer's\n(Focal)")) %>%
-    mutate(ord = 3 - ord)
-  three_panel_page(map(list(focal, take, give), \(d) summarise_bars(mutate(d, fill = cols[ord]))),
-                   c("All", "Take", "Give"), "Score of primary importance")
+    mutate(fill = cols[3 - ord])
+  three_panel_page(map(list(focal, take, give), summarise_bars), c("All", "Take", "Give"), "Score of primary importance")
 }
 
 save_grob <- function(g, file) {
