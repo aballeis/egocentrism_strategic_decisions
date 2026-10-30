@@ -146,7 +146,7 @@ diamond_counts <- function(df) {
     count(ego_all, errors, panel, n_rounds)
 }
 
-diamond_plot <- function(counts, panel_name) {
+diamond_plot <- function(counts, panel_name, points = TRUE) {
   d <- filter(counts, panel == panel_name)
   total <- max(d$n_rounds)
   half <- total / 2
@@ -163,7 +163,7 @@ diamond_plot <- function(counts, panel_name) {
     annotate("text", x = 0, y = -4.25, label = "Always computer's", hjust = 0, size = 3.5) +
     annotate("text", x = total, y = -4.25, label = "Always their own", hjust = 1, size = 3.5) +
     annotate("text", x = half, y = total + 0.9, label = panel_name, fontface = "bold", size = 5) +
-    geom_point(data = d, aes(x = ego_all, y = errors, size = n), alpha = 0.75, color = "#5A2A83") +
+    geom_point(data = if (points) d else d[0, ], aes(x = ego_all, y = errors, size = n), alpha = 0.75, color = "#5A2A83") +
     scale_size_area(max_size = 8, guide = "none") +
     coord_fixed(ratio = 1, xlim = c(-4.8, total + 0.8), ylim = c(-5.1, total + 1.0), expand = FALSE, clip = "off") +
     labs(x = NULL, y = NULL) +
@@ -181,14 +181,14 @@ diamond_plot <- function(counts, panel_name) {
   p
 }
 
-fig5_hetero <- function(df) {
+fig5_hetero <- function(df, points = TRUE) {
   counts <- diamond_counts(df)
   x_lab <- ggplot() +
     annotate("text", x = 0.5, y = 1, label = "Subobjective score participant optimized", fontface = "bold", size = 5) +
     coord_cartesian(xlim = c(0, 1), ylim = c(0.99, 1.01), expand = FALSE, clip = "off") +
     theme_void() +
     theme(plot.margin = margin(10, 0, 8, 0))
-  ((diamond_plot(counts, "Take") + diamond_plot(counts, "Give")) +
+  ((diamond_plot(counts, "Take", points) + diamond_plot(counts, "Give", points)) +
       plot_layout(ncol = 2) & theme(plot.margin = margin(15, 8, 0, 8))) /
     x_lab + plot_layout(heights = c(1, 0.09))
 }
@@ -353,6 +353,7 @@ for (nm in names(samps)) {
     save_gg(fig6_learning(df), file.path(dir, "fig7_learn.png"), 9.8, 3.6)
   }
   save_gg(fig5_hetero(df), file.path(dir, "fig5_hetero.png"), 13.2, 5.1)
+  if (nm == "main") save_gg(fig5_hetero(df, FALSE), file.path(dir, "fig5_hetero_blank.png"), 13.2, 5.1)
   if (nm == "main") save_gg(fig_satisficing(df), file.path(dir, "fig_satisficing.png"), 9.8, 3.8)
   if (nm == "main") save_gg(fig_satisficing_focal(df), file.path(dir, "fig_satisficing_focal.png"), 9.8, 3.8)
 }
