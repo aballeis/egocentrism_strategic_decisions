@@ -19,11 +19,10 @@ const {
 } = cfg;
 const ENABLE_ANIMATIONS = false;
 const STEP_TELEPORT_DELAY = 500; 
-const HUMAN_TO_FIRST_AUTO_DELAY = 1000;   // player → first CPU pick
-const AUTO_TO_AUTO_DELAY        = 500;   // CPU ↔ CPU (or auto-player)
-const LAST_AUTO_TO_POPUP_DELAY  = 1500;   // final pick → endRound()
+const HUMAN_TO_FIRST_AUTO_DELAY = 1000;
+const AUTO_TO_AUTO_DELAY        = 500;
+const LAST_AUTO_TO_POPUP_DELAY  = 1500;
 
-/*  ── grab the Qualtrics ResponseID from the query-string once ── */
 const urlParams     = new URLSearchParams(window.location.search);
 const qualtricsID   = urlParams.get("qualtrics_id") || "";
 
@@ -35,34 +34,32 @@ const totalRounds    = STAGES_ROUNDS.reduce((a,b)=>a+b, 0);
 let stageRound = 1;
 
 const POD_SEQUENCES = {
-  2 : [ ["A","L"], ["B","R"] ],                       // 2 pods
-  4 : [ ["B","L"],["D","R"],["A","L"],["C","R"] ],    // 4 pods
+  2 : [ ["A","L"], ["B","R"] ],
+  4 : [ ["B","L"],["D","R"],["A","L"],["C","R"] ],
   6 : [ ["E","L"],["C","R"],["B","L"],["D","R"],["F","L"],["A","R"] ]
 };
-// Letter→(red,blue) lookup table
 const DEMO_PODS = { A:[2,2], B:[3,3], C:[4,4], D:[5,5], E:[6,6], F:[7,7] };
 
 const QUIZ_POD_SEQUENCES = {
-    2 : [ ["B","L"], ["A","R"] ],                       // 2 pods
-    4 : [ ["C","L"],["B","R"],["A","L"],["D","R"] ],    // 4 pods
+    2 : [ ["B","L"], ["A","R"] ],
+    4 : [ ["C","L"],["B","R"],["A","L"],["D","R"] ],
     6 : [ ["F","L"],["B","R"],["D","L"],["C","R"],["A","L"],["E","R"] ]
   };
 
 function stagePods(i = currentStage){
-  return Number(STAGES_BLOBS[i]);   // force numeric so 6/4/2 match your sequence keys
-}        // 2 | 4 | 6
+  return Number(STAGES_BLOBS[i]);
+}
 function stageGameType(i = currentStage){
-  return STAGES_GAME_TYPES[i];        // 'adversarial' | 'cooperative'
+  return STAGES_GAME_TYPES[i];
 }
 
 function rotateToFirstSide(seq, wantSide){
   if (!Array.isArray(seq) || !seq.length) return seq;
   const k = seq.findIndex(pair => pair && pair[1] === wantSide);
-  if (k <= 0) return seq;               // already starts correctly (or not found)
+  if (k <= 0) return seq;
   return seq.slice(k).concat(seq.slice(0, k));
 }
 
-/* ───────────────── SCREEN MANAGEMENT (0 Welcome, 1 Instructions, 2 Game) ─ */
 let subjectID = null;
 let quizAttempts    = 0;
 let firstTryCorrect = [null, null, null, null];
@@ -72,7 +69,7 @@ function nowNY() {
   return new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
 }
 
-function postQuizInfo(which /* "quiz" | "quiz2" */, payload) {
+function postQuizInfo(which, payload) {
   try {
     quizInfoBundle[which] = payload;
     const delta = {};
@@ -99,19 +96,16 @@ function showScreen(i){
 }
 
 function replacePartnerWords(html, who) {
-  const lower = who.toLowerCase();  // "teammate" or "opponent"
-  const upper = lower.toUpperCase(); // "TEAMMATE" or "OPPONENT"
-  const title = who;                 // "Teammate" or "Opponent"
+  const lower = who.toLowerCase();
+  const upper = lower.toUpperCase();
+  const title = who;
 
   return html.replace(/teammate|opponent/gi, (match) => {
     if (match === match.toUpperCase()) {
-      // TEAMMATE / OPPONENT
       return upper;
     } else if (match[0] === match[0].toUpperCase()) {
-      // Teammate / Opponent
       return title;
     } else {
-      // teammate / opponent
       return lower;
     }
   });
@@ -122,32 +116,27 @@ function setPartnerLabels(stage = currentStage) {
   const who = gt === "cooperative" ? "Teammate" : "Opponent";
   const whoLower = who.toLowerCase();
 
-  // Update the side box labels
   const demoRightLabel = document.getElementById("demoRightLabel");
   if (demoRightLabel) demoRightLabel.textContent = who;
 
   const quizRightLabel = document.getElementById("quizRightLabel");
   if (quizRightLabel) quizRightLabel.textContent = who;
 
-  // Update right score title on the game screen
   const rightScoreTitle = document.querySelector('#right-area .score-title');
   if (rightScoreTitle) {
     rightScoreTitle.textContent = `${who}'s Score`;
   }
 
-  // 🔹 NEW: update the GAME screen helper text (#instructions)
   const gameInstructions = document.getElementById("instructions");
   if (gameInstructions) {
     gameInstructions.innerHTML = replacePartnerWords(gameInstructions.innerHTML, who);
   }
 
-  // 🔹 NEW: update the INSTRUCTIONS PAGE text (#instructionsText)
   const introInstructions = document.getElementById("instructionsText");
   if (introInstructions) {
     introInstructions.innerHTML = replacePartnerWords(introInstructions.innerHTML, who);
   }
 
-  // Update metric label on the scoreDifference element
   const scoreDiff = document.getElementById("scoreDifference");
   if (scoreDiff) {
     const metricLabel = gt === "cooperative" ? "Score Sum: " : "Score Difference: ";
@@ -227,24 +216,21 @@ function checkQuizAnswers(redSum, blueSum, gtThisStage) {
     return;
   }
 
-    /* success: record stats, swap button to Continue */
     const isFirst = (currentStage === 0);
     const route   = isFirst ? "/subject_update" : "/stage_update";
     const stage   = isFirst ? "check" : "check2";
 
-    // ---- 1) Send bundle to Qualtrics (one ED: quiz_info) ----
     const whichQuiz = isFirst ? "quiz" : "quiz2";
     const quizPayload = {
       subject_id: subjectID,
-      stage: whichQuiz,                 // "quiz" or "quiz2" (consistent)
+      stage: whichQuiz,
       attempts: quizAttempts,
-      first_try_results: firstTryCorrect.slice(), // [0/1,...] for q1-q4
+      first_try_results: firstTryCorrect.slice(),
       all_first_try: (quizAttempts === 1 ? 1 : 0),
       completed_at: nowNY()
     };
     postQuizInfo(whichQuiz, quizPayload);
 
-    // ---- 2) Keep your server logging (unchanged) ----
     fetch(route, {
       method:"POST",
       headers:{"Content-Type":"application/json"},
@@ -280,13 +266,11 @@ function checkQuizAnswers(redSum, blueSum, gtThisStage) {
     el.style.left       = "50%";
     el.style.top        = "50%";
     el.style.transform  = "translate(-50%,-50%)";
-    /* make sure parent has position context */
     if (getComputedStyle(el.parentElement).position === "static"){
         el.parentElement.style.position = "relative";
     }
 }
 
-// 0 ➜ 1  (Welcome ➜ Instructions)
 document.getElementById("btnBeginWelcome").onclick = () => {
   fetch("/subject_new", {
     method: "POST",
@@ -303,7 +287,6 @@ document.getElementById("btnBeginWelcome").onclick = () => {
   .catch(console.error);
 };
   
-  // 1 ➜ 2  (Instructions ➜ Demo)
   document.getElementById("btnInstrContinue").onclick = () => {
     fetch("/subject_update",{
         method:"POST",
@@ -315,18 +298,16 @@ document.getElementById("btnBeginWelcome").onclick = () => {
     setPartnerLabels();
   };
   
-// Modify the setupDemoPods function to ensure pods start in the center center
 function setupDemoPods () {
-  const podCount      = stagePods();         // ← dynamic
+  const podCount      = stagePods();
   const demoContainer = document.getElementById("demoStaticPods");
-  demoContainer.innerHTML = "";              // clear previous stage
+  demoContainer.innerHTML = "";
 
-  /* layout coordinates */
   const layout = (podCount === 2)
         ? [[0,0],[1,0]]
         : (podCount === 4)
             ? [[0,0],[0,1],[1,0],[1,1]]
-            : [[0,0],[0,1],[0,2],[1,0],[1,1],[1,2]];  // 6-pod
+            : [[0,0],[0,1],[0,2],[1,0],[1,1],[1,2]];
   const spacing = 150;
   const cols = Math.max(...layout.map(l => l[1])) + 1;
   const rows = Math.max(...layout.map(l => l[0])) + 1;
@@ -335,7 +316,6 @@ function setupDemoPods () {
       `position:relative;margin:10px auto;width:${cols*spacing}px;height:${rows*spacing}px;`;
 
   const inner = document.createElement("div");
-  /* responsive flex grid instead of a fixed-width block */
   inner.style.cssText =
       `display:flex; flex-wrap:wrap; justify-content:center; gap:10px;
       position:relative; margin:0 auto; max-width:100%;`;
@@ -372,7 +352,7 @@ function setupDemoPods () {
 
 let demoIsRunning = false;
 function playDemo () {
-  if (demoIsRunning) return;        // prevent double-click reentry
+  if (demoIsRunning) return;
   demoIsRunning = true;
 
   const gtThisStage = stageGameType();
@@ -386,7 +366,6 @@ function playDemo () {
     return;
   }
 
-  // GIVE mode: rotate draw ORDER only (keeps same pod->side mapping)
   const giveMode = (!DRAW_IS_TAKE);
   seq = rotateToFirstSide(seq, giveMode ? "R" : "L");
 
@@ -413,7 +392,7 @@ function playDemo () {
       return;
     }
 
-    const item = seq[step++];           // defensive: avoid destructuring undefined
+    const item = seq[step++];
     if (!item) {
       console.warn("Demo sequence ended unexpectedly; forcing narration.");
       demoIsRunning = false;
@@ -432,7 +411,6 @@ function playDemo () {
     const grid  = (side === "L") ? leftG : rightG;
     const [redCnt, blueCnt] = DEMO_PODS[letter];
 
-    // NO-ANIMATION branch
     const final = pod.cloneNode(true);
     final.className = "blob-container-static";
     final.style.cssText = "width:100px;height:100px;margin:20px auto;";
@@ -486,7 +464,6 @@ function playDemo () {
 }
 
 function setupQuizPods() {
-  // Clear previous quiz content
   document.getElementById("quizLeftGrid").innerHTML = "";
   document.getElementById("quizRightGrid").innerHTML = "";
   document.getElementById("quizFormContainer").innerHTML = "";
@@ -497,12 +474,10 @@ function setupQuizPods() {
     narr.style.display = "none";
   }
   
-  // Clear and recreate the quiz static pods container
   const podCount = stagePods();
   const quizContainer = document.getElementById("quizStaticPods");
   quizContainer.innerHTML = "";
   
-  // Define layout based on pod count
   const layout = (podCount === 2)
     ? [[0,0],[1,0]]
     : (podCount === 4)
@@ -515,12 +490,10 @@ function setupQuizPods() {
   
   quizContainer.style.cssText = `position:relative;margin:0 auto;width:${cols*spacing}px;height:${rows*spacing}px;`;
   
-  // Create the inner container for proper centering
   const inner = document.createElement("div");
   inner.style.cssText = `position:absolute;top:0;left:50%;transform:translateX(-50%);width:${cols*spacing}px;height:${rows*spacing}px;`;
   quizContainer.appendChild(inner);
   
-  // Create each pod
   for (let i = 0; i < podCount; i++) {
     const letter = String.fromCharCode(65 + i);
     const [red, blue] = DEMO_PODS[letter];
@@ -552,7 +525,6 @@ function setupQuizPods() {
     inner.appendChild(pod);
   }
   
-  // Make sure the quiz play button is enabled
   const btnQuizPlay = document.getElementById("btnQuizPlay");
   if (btnQuizPlay) {
     btnQuizPlay.disabled = false;
@@ -563,7 +535,7 @@ let quizIsRunning = false;
 function playQuizDemo() {
     quizAttempts = 0;
     firstTryCorrect = [null, null, null, null];
-  if (quizIsRunning) return;        // prevent double-start
+  if (quizIsRunning) return;
   quizIsRunning = true;
 
   const gtThisStage = stageGameType();
@@ -576,7 +548,6 @@ function playQuizDemo() {
     return;
   }
 
-  // GIVE mode: rotate ORDER only
   const giveMode = (!DRAW_IS_TAKE);
   seq = rotateToFirstSide(seq, giveMode ? "R" : "L");
 
@@ -638,7 +609,6 @@ function playQuizDemo() {
   moveNext();
 }
 
-/* ───────────────────────────────── GAME LOGIC  (unchanged) ───────────────── */
 let currentRound=1, gameLog=[], playerScore=0, opponentScore=0;
 let playerTurn=true, selectionAllowed=true, blobs=[], blobSize=100;
 let moves=[], moveTimestamps=[], roundStartTime=null, finalChosenRound=null;
@@ -657,25 +627,22 @@ const modalButtonEl   = document.getElementById("modal-button");
 const totalRoundsEl   = document.getElementById("totalRounds");
 
 function initGame () {
-  /* ── compute the GLOBAL round number every time a new Game stage starts ── */
   if (currentRound === 0 || stageRound === 1) {
       currentRound = currentStage * roundsPerStage + 1;
   }
 
-  stageRound = 1;                           // within-stage counter
+  stageRound = 1;
   totalRoundsEl.textContent = roundsPerStage;
 
   updateGameScreenInstructions();
   initRound();
 }
 
-// New function to update game screen instructions
 function updateGameScreenInstructions() {
   const gtThisStage = stageGameType();
   const partner = gtThisStage === "cooperative" ? "Teammate" : "Opponent";
   const partnerLower = partner.toLowerCase();
   
-  // Update the condition-specific text
   const metric = gtThisStage === "cooperative" 
     ? "Score Sum = Your Score + Teammate Score."
     : "Score Difference = Your Score – Opponent Score.";
@@ -688,10 +655,8 @@ function updateGameScreenInstructions() {
     ? `YOUR RED DOTS minus OPPONENT'S BLUE DOTS determines BONUS.`
     : `YOUR RED DOTS plus TEAMMATE'S BLUE DOTS determines BONUS.`;
   
-  // Get pod count for this stage
   const podCount = stagePods();
   
-  // Determine rules text based on pod count
   let rulesText;
   if (podCount === 2) {
     rulesText = DRAW_IS_TAKE
@@ -710,7 +675,6 @@ function updateGameScreenInstructions() {
   }
 
   
-  // Update the instructions HTML
   const instructionsEl = document.getElementById('instructions');
   const giveTakeHTML = DRAW_IS_TAKE
   ? `Every time you get a pod, you get points equal to its 
@@ -729,19 +693,17 @@ function updateGameScreenInstructions() {
     `;
   }
   
-  // Update the right score title
   const rightScoreTitle = document.querySelector('#right-area .score-title');
   if (rightScoreTitle) {
     rightScoreTitle.textContent = `${partner}'s Score`;
   }
   
-  // Update score difference/sum label
   updateScoreObj();
 }
 
 function initRound(){
     const roundIndex = currentRound-1;
-    autoModeRound = (ROUND_CONFIG[roundIndex].blobCount > 2);  // 6‑pod ⇒ auto
+    autoModeRound = (ROUND_CONFIG[roundIndex].blobCount > 2);
     playerTurn = true;  selectionAllowed = true;
     moves=[]; moveTimestamps=[];
     roundStartTime = new Date().toLocaleString('en-US',{timeZone:'America/New_York'});
@@ -788,7 +750,7 @@ function initRound(){
     });
   }
   
-  function schedulePlayerAuto(){           // small wrapper for clarity
+  function schedulePlayerAuto(){
     setTimeout(playerAutoPick, AUTO_TO_AUTO_DELAY);
   }
 
@@ -922,7 +884,6 @@ function playerSelectBlob(blobId) {
 
   const giveFirst = (!DRAW_IS_TAKE);
 
-  // If TAKE: your first pick goes to you (left). If GIVE: your first pick goes to partner (right).
   const firstGoesToPlayer = !giveFirst;
 
   animateBlobToSide(chosen, firstGoesToPlayer, () => {
@@ -935,15 +896,14 @@ function playerSelectBlob(blobId) {
     }
     updateScoreObj();
 
-    // After the single human choice, all remaining pods are random draws.
     setTimeout(() => {
       playerTurn = false;
       updateTurnIndicator();
 
       if (firstGoesToPlayer) {
-        opponentPick();     // TAKE: partner draws next
+        opponentPick();
       } else {
-        playerAutoPick();   // GIVE: you draw next (random)
+        playerAutoPick();
       }
     }, HUMAN_TO_FIRST_AUTO_DELAY);
   });
@@ -968,7 +928,7 @@ function opponentPick(){
     if(still.length === 0){
         setTimeout(endRound, LAST_AUTO_TO_POPUP_DELAY);
     } else if(autoModeRound){
-        schedulePlayerAuto();            // all remaining moves automated
+        schedulePlayerAuto();
     } else {
         playerTurn = true;
         selectionAllowed = true;
@@ -982,19 +942,16 @@ function animateBlobToSide(blob, side, callback){
   const origEl = blob.element;
   if (!origEl) return;
 
-  /* remove Select button (if present) */
   origEl.querySelector(".select-button-container")?.remove();
 
-  /* ─── NO-ANIMATION branch ─────────────────────────────────────── */
   if (!ENABLE_ANIMATIONS){
     const destGrid = side ? selectedLeftEl : selectedRightEl;
-    destGrid.appendChild(createStaticBlobContainer(blob));  // park it instantly
-    origEl.remove();                                        // hide original
-    callback?.();                                           // continue round logic
+    destGrid.appendChild(createStaticBlobContainer(blob));
+    origEl.remove();
+    callback?.();
     return;
   }
 
-  /* ─── ORIGINAL flying-clone logic (unchanged) ─────────────────── */
   const destGrid = side ? selectedLeftEl : selectedRightEl;
   const placeholder = createStaticBlobContainer(blob);
   placeholder.style.visibility = "hidden";
@@ -1098,7 +1055,6 @@ function endRound() {
   roundLog.action_game_type = stageGameType();
   roundLog.action_condition = stagePods();
 
-  // Populate CSV_COLUMNS if needed
   CSV_COLUMNS.forEach(col => {
     roundLog[col] = (ROUND_SAMPLES[currentRound - 1]?.[col] ?? null);
   });
@@ -1118,18 +1074,15 @@ function endRound() {
     `If this round is selected for your payoff, you will earn $${pay}.`
   );
 
-  // Detect “end of game” versus “end of first stage”
   const isOnlyOneStage = totalStages === 1;
   const isEndOfGame    = isOnlyOneStage
                         ? (stageRound === STAGES_ROUNDS[0])
                         : (currentStage === (totalStages - 1) && stageRound === STAGES_ROUNDS[currentStage]);
 
   if (isEndOfGame) {
-    // Final‐round logic (mark one round implemented and show “Thanks for participating”)
     modalButtonEl.onclick = () => {
       closeModal();
     
-      // 1) write the final round
       logRoundPayload(roundLog);
 
       finalChosenRound = Math.floor(Math.random() * totalRounds) + 1;
@@ -1153,7 +1106,6 @@ function endRound() {
     };
 
   } else {
-    // Multi‐stage logic: if it’s exactly end of the first stage, do transition
     const isEndOfFirstStage = (currentStage === 0 && stageRound === STAGES_ROUNDS[0]);
     if (isEndOfFirstStage) {
       modalButtonEl.onclick = () => {
@@ -1162,7 +1114,6 @@ function endRound() {
         showStageTransition();
       };
     } else {
-      // Normal round‐by‐round advance within a stage
       modalButtonEl.onclick = () => {
         closeModal();
         logRoundPayload(roundLog);
@@ -1170,7 +1121,6 @@ function endRound() {
         if (stageRound < roundsPerStage) {
           nextRound();
         } else {
-          // After finishing this stage, pick final round among all if it’s last stage:
           const Q = Math.floor(Math.random() * totalRounds) + 1;
           finalChosenRound = Q;
           showFinal();
@@ -1202,26 +1152,24 @@ function logRoundPayload(roundLog){
 function resetQuizPlayButtonForStage() {
   const btn = document.getElementById("btnQuizPlay");
   if (!btn) return;
-  btn.disabled = false;                 // allow once per stage
+  btn.disabled = false;
   btn.dataset.usedThisStage = "0";
 }
 
 function nextRound () {
   closeModal();
-  currentRound++;   // keeps counting 1..12 for payoff lottery
-  stageRound++;     // 1..6 on screen and in the log
+  currentRound++;
+  stageRound++;
   initRound();
 }
 
 function showStageTransition() {
   console.log("EXECUTING SIMPLIFIED TRANSITION");
   
-  // Create transition message based on what's changing
-  const [g1, g2] = STAGES_GAME_TYPES;     // game-type before / after
-  const [b1, b2] = STAGES_BLOBS;          // pod-count before / after
+  const [g1, g2] = STAGES_GAME_TYPES;
+  const [b1, b2] = STAGES_BLOBS;
   const isGame   = WITHIN_SUBJECT === "game_type";
 
-  // Create message text with appropriate bold formatting
   const who1  = g1 === "adversarial" ? "<b>opponent</b>" : "<b>teammate</b>";
   const who2  = g2 === "adversarial" ? "<b>opponent</b>" : "<b>teammate</b>";
   const pods1 = `<b>${b1}</b>`;
@@ -1235,50 +1183,42 @@ function showStageTransition() {
       + `Instead of choosing from ${pods1} pods each round, you will now choose from ${pods2} pods per round. `
       + `The instructions and a demo will teach you how this new version of the game works.`;
   
-  // Show modal with the transition message
   modalMessageEl.innerHTML = msg + "<br><br>";
   modalOverlayEl.style.display = "flex";
   modalButtonEl.style.display = "inline-block";
   modalButtonEl.disabled = true;
   
-  // Critical: Make sure to enable the button after delay
   console.log("Setting button enable timeout");
   setTimeout(function() {
     console.log("Enabling transition button");
     modalButtonEl.disabled = false;
   }, 2000);
   
-  // Set up the click handler for the transition button
   modalButtonEl.onclick = function () {
     closeModal();
   
     transitionDone = true;
-    currentStage++;               // 0 → 1
+    currentStage++;
     stageRound   = 1;
-    currentRound = currentStage * roundsPerStage + 1;   // jump to 4 immediately
+    currentRound = currentStage * roundsPerStage + 1;
   
     resetDemoAndQuizElements();
     setPartnerLabels(currentStage);
     setupDemoPods();
     setupQuizPods();
     
-    // Reset navigation buttons state
     const btnDemoPlay = document.getElementById("btnDemoPlay");
     const btnDemoContinue = document.getElementById("btnDemoContinue");
     if (btnDemoPlay) btnDemoPlay.disabled = false;
     if (btnDemoContinue) btnDemoContinue.disabled = true;
     
-    // Reset quiz attempts
     quizAttempts = 0;
     firstTryCorrect = [null, null, null, null];
     
-    // Update bottom text for both screens
     updateBottomText();
     
-    // Update game screen instructions for when we return
     updateGameScreenInstructions();
     
-    // Show the INSTRUCTIONS screen for stage 2 first in stage 2
     showScreen(1);
 
     console.log("TRANSITION COMPLETE - SHOWING INSTRUCTIONS FOR STAGE 2");
@@ -1286,32 +1226,26 @@ function showStageTransition() {
   };
 }
 
-// Add this new function to fully reset the demo and quiz elements
 function resetDemoAndQuizElements() {
-  // Clear demo containers
   document.getElementById("demoLeftGrid").innerHTML = "";
   document.getElementById("demoRightGrid").innerHTML = "";
   
-  // Reset narration elements
   const demoNarr = document.getElementById("demoNarration");
   if (demoNarr) {
     demoNarr.innerHTML = "";
     demoNarr.style.display = "none";
   }
   
-  // Clear quiz containers
   document.getElementById("quizLeftGrid").innerHTML = "";
   document.getElementById("quizRightGrid").innerHTML = "";
   document.getElementById("quizFormContainer").innerHTML = "";
   
-  // Reset quiz narration
   const quizNarr = document.getElementById("quizNarration");
   if (quizNarr) {
     quizNarr.innerHTML = "";
     quizNarr.style.display = "none";
   }
   
-  // Ensure the static pods elements are cleared for both demo and quiz
   document.getElementById("demoStaticPods").innerHTML = "";
   document.getElementById("quizStaticPods").innerHTML = "";
 
@@ -1348,19 +1282,16 @@ function updateBottomText() {
     <span style='font-weight:bold;'>${metric}<br>${payoffText}</span>
   `;
 
-  // NEW: instructions bottom text
   const instrBottomText = document.getElementById('instrBottomText');
   if (instrBottomText) {
     instrBottomText.innerHTML = bottomHTML;
   }
 
-  // Demo bottom text
   const demoBottomText = document.getElementById('demoBottomText');
   if (demoBottomText) {
     demoBottomText.innerHTML = bottomHTML;
   }
 
-  // Quiz bottom text
   const quizBottomText = document.getElementById('quizBottomText');
   if (quizBottomText) {
     quizBottomText.innerHTML = bottomHTML;
@@ -1374,7 +1305,6 @@ function showFinal () {
     "*"
   );
 } catch(e){}
-  /* ①  cache the final screen so reloads land here */
   const finalHTML = `
     <div style="width:100%;height:100vh;display:flex;justify-content:center;align-items:center;text-align:center;padding:0 20px;">
       <h2 style="font-size:2em;line-height:1.3;">
@@ -1382,14 +1312,12 @@ function showFinal () {
       </h2>
     </div>`;
 
-  /* ②  stamp “end” in the DB */
   fetch("/subject_update", {
     method : "POST",
     headers: { "Content-Type":"application/json" },
     body   : JSON.stringify({ subject_id: subjectID, stage: "end" })
   });
 
-  /* ③  swap the whole game UI for the final message */
   closeModal();
   document.getElementById("gameRoot").innerHTML = finalHTML;
 }
@@ -1409,12 +1337,10 @@ function closeModal(){
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    // 1️⃣ Initial layout + labels
     setupDemoPods();
     setPartnerLabels();
     updateBottomText();
   
-    // 2️⃣ Demo page buttons
     const btnDemoPlay     = document.getElementById("btnDemoPlay");
     const btnDemoContinue = document.getElementById("btnDemoContinue");
     btnDemoPlay.onclick = () => {
@@ -1429,12 +1355,11 @@ document.addEventListener("DOMContentLoaded", () => {
       btnDemoContinue.disabled = true;
       playDemo();
     };
-    btnDemoContinue.disabled = true;  // will be enabled in showNarration()
+    btnDemoContinue.disabled = true;
   
-    // 3️⃣ Quiz page buttons
     const btnQuizPlay = document.getElementById("btnQuizPlay");
 btnQuizPlay.onclick = () => {
-  if (btnQuizPlay.dataset.usedThisStage === "1") return; // extra safety
+  if (btnQuizPlay.dataset.usedThisStage === "1") return;
   btnQuizPlay.dataset.usedThisStage = "1";
   btnQuizPlay.disabled = true;
 
@@ -1443,7 +1368,6 @@ btnQuizPlay.onclick = () => {
 };
 
   
-    // 4️⃣ Screen‑transition: Demo ➔ Quiz
     document.getElementById("btnDemoContinue").onclick = () => {
       showScreen(3);
       setPartnerLabels();

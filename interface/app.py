@@ -451,7 +451,7 @@ def index():
     </body>
 <script>
 (() => {
-  const W = 1280;                                   // design width
+  const W = 1280;
   const root = document.getElementById('gameRoot') ||
                document.getElementById('screenGame');
 

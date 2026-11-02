@@ -1,49 +1,42 @@
-/* ─────  FIXED-SIZE CANVAS + SIMPLE WRAPPER  ─────────────────── */
 :root{
   --design-w:1100px;
   --design-h:660px;
 }
 
-/* page root (iframe body) */
 html,body{
   margin:0;
   padding:0;
   width:var(--design-w);
-  height:var(--design-h);     /* ← single, reliable value */
-  overflow:hidden;            /* iframe never scrolls */
+  height:var(--design-h);
+  overflow:hidden;
   font-family:Arial, sans-serif;
   background:#fff;
   text-align:center;
   font-size:90%;
 }
 
-/* top-level wrapper the scale() script targets */
 #gameRoot{
   width:var(--design-w);
   height:var(--design-h);
 }
 
-/* ─────  BASE LAYOUT THAT WAS WORKING ORIGINALLY  ─────────────── */
 .screen          { display:none; }
 .screen.active   { display:block; }
 
 #screenGame{
-  width:var(--design-w);        /* 1280 */
+  width:var(--design-w);
   height:var(--design-h);       
-  /* display:flex;      ← DELETE this line */
   flex-direction:column;
   padding:0;
   margin:0;
 }
 
-/* ------------- NEW: flex layout kicks in only when .active ------------- */
-.screen.active#screenGame{      /* higher-specificity selector */
+.screen.active#screenGame{
   display:flex;
 }
 
-/* 3 columns fill whatever is left under top-bar + rules */
 #container{
-  flex:1 1 auto;                  /* ← no magic numbers */
+  flex:1 1 auto;
   display:flex;
   width:100%;
   box-sizing:border-box;
@@ -52,7 +45,6 @@ html,body{
 #top-bar{ margin-top:10px; font-size:22px; font-weight:bold; }
 #instructions{ width:100%; font-size:14px; margin:5px 0 10px; }
 
-/* ─────  ORIGINAL DEMO / QUIZ SIDE BOXES, BUT PINNED  ─────────── */
 .sideBox{
   position:absolute; top:30%; transform:translateY(-50%);
   width:260px; border:2px solid #000; border-radius:6px;
@@ -62,7 +54,6 @@ html,body{
 #demoLeftBox, #quizLeftBox   { left:20px; }
 #demoRightBox, #quizRightBox { right:20px; }
   
-  /* left / right coordinates */
   #demoLeftBox,
   #quizLeftBox  { left:20px;  }
   
@@ -75,31 +66,28 @@ html,body{
   }
   
   .sideLabel {
-    margin-top: 2px; /* reduced label-top margin */
+    margin-top: 2px;
     font-weight: bold;
     font-size: 16px;
     pointer-events: none;
   }
   
-  /* where the pods get parked */
   .boxGrid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
-    padding: 10px 0 5px; /* reduced top/bottom padding */
+    padding: 10px 0 5px;
     justify-items: center;
     align-content: flex-start;
     width: 100%;
   }
   
-  /* ─── coloured words for narration ───────────────────────────── */
   .redText { color: red; font-weight: bold; }
   .blueText { color: blue; font-weight: bold; }
   
-  /* ─── Demo & Quiz pods centering and spacing ─────────────────── */
   #demoStaticPods,
   #quizStaticPods {
-    margin: 10px auto !important; /* center pods block and reduce vertical space */
+    margin: 10px auto !important;
     min-height: 150px;
   }
   #demoNarration,
@@ -110,7 +98,7 @@ html,body{
     transform: translate(-50%, -50%);
     width: 80%;
     max-width: 600px;
-    background: rgba(255, 255, 255, 0.95); /* optional: background to make text readable */
+    background: rgba(255, 255, 255, 0.95);
     padding: 20px;
     text-align: center;
     border-radius: 8px;
@@ -120,7 +108,7 @@ html,body{
   }
   
   .quiz-row {
-    margin-bottom: 8px; /* reduced spacing between form rows */
+    margin-bottom: 8px;
     text-align: center;
   }
   
@@ -129,10 +117,10 @@ html,body{
   }
   #quizFormContainer:not(:empty) {
     position: absolute;
-    top: 35%; /* slightly higher to reduce full-page length */
+    top: 35%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 400px; /* narrower form width */
+    width: 400px;
     padding: 15px;
     background: #fff;
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
@@ -142,7 +130,7 @@ html,body{
 
   #demoBottomText,
   #quizBottomText{
-    margin-bottom:25px;   /* was 0 – gives ~½-line of space */
+    margin-bottom:25px;
   }
   
   #top-bar{
@@ -167,7 +155,7 @@ html,body{
     align-items:center;
     border:1px solid #ccc;
     margin:5px;
-    overflow-y:auto;                /* ← scroll if pods overflow */
+    overflow-y:auto;
   }
 
 
@@ -182,13 +170,12 @@ html,body{
   justify-items:center;
   align-items:start;
 
-  /* NEW ↓ */
-  align-content:start;    /* pack rows at the top, leave free space below */
+  align-content:start;
 
   width:100%;
   padding:10px;
   box-sizing:border-box;
-  flex:1;                 /* keep the nice scrolling behaviour */
+  flex:1;
 }
 
 #turnIndicator{
@@ -196,10 +183,8 @@ html,body{
   text-align:center;
   font-weight:bold;
 
-  /* responsive sizing: min 16px, preferred scales with viewport, max 32px */
   font-size: clamp(16px, 2.4vw, 32px);
 
-  /* helps long text fit nicely */
   line-height: 1.1;
   padding: 0 10px;
 }
@@ -214,9 +199,9 @@ html,body{
   overflow:hidden;
 }
 
-#middle-grid{                    /* leave room for the label */
+#middle-grid{
   position:absolute;
-  top:65px; left:0; right:0; bottom:110px;   /* 120 → 110 */
+  top:65px; left:0; right:0; bottom:110px;
   z-index:1;
 }
 
@@ -224,9 +209,6 @@ html,body{
   position:absolute;
   left:0; right:0;
 
-  /* 65 px = grid’s top offset
-     2 × (blob + 10) = height of two rows + the 10-px row-gap
-     +15 px = a little breathing-room under the pods            */
   top:calc(65px + 2*(var(--blob-size) + 10px) + 15px);
 
   text-align:center;
@@ -256,14 +238,12 @@ html,body{
 
 .animating-blob{pointer-events:none;transition:all 1s ease-in-out;z-index:9999;}
 
-/* modal */
 #modal-overlay{position:fixed;z-index:99999;left:0;top:0;width:100%;height:100%;
                background:rgba(0,0,0,.5);display:none;justify-content:center;align-items:center;}
 #modal-content{background:#fff;padding:20px;border-radius:5px;text-align:center;max-width:400px;}
 #start-over-btn{margin-top:15px;font-size:14px;cursor:pointer;}
 #final-screen{text-align:center;margin-top:30px;}
 
-/* misc helpers */
 #instructionsText{text-align:center;}
 #demoStaticPods{margin-top:20px;}
 #demoStaticPods,#quizStaticPods{min-height:240px;}
@@ -281,21 +261,20 @@ html,body{
     top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 500px;           /* or whatever fixed/max width you like */
+    width: 500px;
     padding: 20px;
-    background: #fff;       /* so it stands out */
+    background: #fff;
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     border-radius: 8px;
   }
   
-  /* make sure the quiz screen itself is a positioning context */
   .screen { position: relative; }
 
   :root{ --blob-size:110px; } 
 
 
 
-:root{ --instr-scale:1.5; }        /* adjust this number to taste */
+:root{ --instr-scale:1.5; }
 
 #instructions,
 #instructionsText,
@@ -308,60 +287,52 @@ html,body{
   line-height: 1.3em;
 }
 
-/* ── global “knob” for h2 section headings ─────────────────────── */
-:root{ --section-h2: 2.2rem; }      /* tweak this number any time */
+:root{ --section-h2: 2.2rem; }
 
-.screen h2{                         /* catches all h2 in every screen */
+.screen h2{
   font-size: var(--section-h2);
   margin: .25em 0;
 }
 
-/* ─────  FIXED-SIZE CANVAS + SIMPLE WRAPPER  ─────────────────── */
 :root{
   --design-w:1280px;
   --design-h:650px;
 }
 
-/* page root (iframe body) */
 html,body{
   margin:0;
   padding:0;
   width:var(--design-w);
-  height:var(--design-h);     /* ← single, reliable value */
-  overflow:hidden;            /* iframe never scrolls */
+  height:var(--design-h);
+  overflow:hidden;
   font-family:Arial, sans-serif;
   background:#fff;
   text-align:center;
   font-size:90%;
 }
 
-/* top-level wrapper the scale() script targets */
 #gameRoot{
   width:var(--design-w);
   height:var(--design-h);
 }
 
-/* ─────  BASE LAYOUT THAT WAS WORKING ORIGINALLY  ─────────────── */
 .screen          { display:none; }
 .screen.active   { display:block; }
 
 #screenGame{
-  width:var(--design-w);        /* 1280 */
+  width:var(--design-w);
   height:var(--design-h);       
-  /* display:flex;      ← DELETE this line */
   flex-direction:column;
   padding:0;
   margin:0;
 }
 
-/* ------------- NEW: flex layout kicks in only when .active ------------- */
-.screen.active#screenGame{      /* higher-specificity selector */
+.screen.active#screenGame{
   display:flex;
 }
 
-/* 3 columns fill whatever is left under top-bar + rules */
 #container{
-  flex:1 1 auto;                  /* ← no magic numbers */
+  flex:1 1 auto;
   display:flex;
   width:100%;
   box-sizing:border-box;
@@ -370,32 +341,29 @@ html,body{
 #top-bar{ margin-top:10px; font-size:22px; font-weight:bold; }
 #instructions{ width:100%; font-size:14px; margin:5px 0 10px; }
 
-/* ─────  ORIGINAL DEMO / QUIZ SIDE BOXES, BUT PINNED  ─────────── */
-:root{                           /* uses whatever blob size you pick */
-  --pods-rows: 2;                /* how many rows you’ll ever need   */
+:root{
+  --pods-rows: 2;
 }
 
 .sideBox{
   height: calc(
-           var(--pods-rows) * var(--blob-size)     /* pod rows       */
-           + (var(--pods-rows) - 1) * 10px         /* row gaps (gap:10px) */
-           + 120px                                  /* label + padding    */
+           var(--pods-rows) * var(--blob-size)
+           + (var(--pods-rows) - 1) * 10px
+           + 120px
          );
-  overflow: hidden;             /* content stays inside, box never grows */
+  overflow: hidden;
 }
 
-/* grid inside the box: exactly two rows, never stretches */
 .boxGrid{
   height: calc(
            var(--pods-rows) * var(--blob-size)
            + (var(--pods-rows) - 1) * 10px
          );
-  flex: none;                   /* prevent flexbox growth */
+  flex: none;
 }
 #demoLeftBox, #quizLeftBox   { left:20px; }
 #demoRightBox, #quizRightBox { right:20px; }
   
-  /* left / right coordinates */
   #demoLeftBox,
   #quizLeftBox  { left:20px;  }
   
@@ -408,31 +376,28 @@ html,body{
   }
   
   .sideLabel {
-    margin-top: 2px; /* reduced label-top margin */
+    margin-top: 2px;
     font-weight: bold;
     font-size: 16px;
     pointer-events: none;
   }
   
-  /* where the pods get parked */
   .boxGrid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
-    padding: 10px 0 5px; /* reduced top/bottom padding */
+    padding: 10px 0 5px;
     justify-items: center;
     align-content: flex-start;
     width: 100%;
   }
   
-  /* ─── coloured words for narration ───────────────────────────── */
   .redText { color: red; font-weight: bold; }
   .blueText { color: blue; font-weight: bold; }
   
-  /* ─── Demo & Quiz pods centering and spacing ─────────────────── */
   #demoStaticPods,
   #quizStaticPods {
-    margin: 10px auto !important; /* center pods block and reduce vertical space */
+    margin: 10px auto !important;
     min-height: 150px;
   }
   #demoNarration,
@@ -443,7 +408,7 @@ html,body{
     transform: translate(-50%, -50%);
     width: 80%;
     max-width: 600px;
-    background: rgba(255, 255, 255, 0.95); /* optional: background to make text readable */
+    background: rgba(255, 255, 255, 0.95);
     padding: 20px;
     text-align: center;
     border-radius: 8px;
@@ -453,7 +418,7 @@ html,body{
   }
   
   .quiz-row {
-    margin-bottom: 8px; /* reduced spacing between form rows */
+    margin-bottom: 8px;
     text-align: center;
   }
   
@@ -462,10 +427,10 @@ html,body{
   }
   #quizFormContainer:not(:empty) {
     position: absolute;
-    top: 35%; /* slightly higher to reduce full-page length */
+    top: 35%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 400px; /* narrower form width */
+    width: 400px;
     padding: 15px;
     background: #fff;
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
@@ -475,7 +440,7 @@ html,body{
 
   #demoBottomText,
   #quizBottomText{
-    margin-bottom:25px;   /* was 0 – gives ~½-line of space */
+    margin-bottom:25px;
   }
   
   #top-bar{
@@ -500,7 +465,7 @@ html,body{
     align-items:center;
     border:1px solid #ccc;
     margin:5px;
-    overflow-y:auto;                /* ← scroll if pods overflow */
+    overflow-y:auto;
   }
 
 
@@ -515,13 +480,12 @@ html,body{
   justify-items:center;
   align-items:start;
 
-  /* NEW ↓ */
-  align-content:start;    /* pack rows at the top, leave free space below */
+  align-content:start;
 
   width:100%;
   padding:10px;
   box-sizing:border-box;
-  flex:1;                 /* keep the nice scrolling behaviour */
+  flex:1;
 }
 
 #turnIndicator{margin-top:5px;text-align:center;font-size:36px;font-weight:bold;}
@@ -535,9 +499,9 @@ html,body{
   overflow:hidden;
 }
 
-#middle-grid{                    /* leave room for the label */
+#middle-grid{
   position:absolute;
-  top:65px; left:0; right:0; bottom:110px;   /* 120 → 110 */
+  top:65px; left:0; right:0; bottom:110px;
   z-index:1;
 }
 
@@ -545,9 +509,6 @@ html,body{
   position:absolute;
   left:0; right:0;
 
-  /* 65 px = grid’s top offset
-     2 × (blob + 10) = height of two rows + the 10-px row-gap
-     +15 px = a little breathing-room under the pods            */
   top:calc(65px + 2*(var(--blob-size) + 10px) + 15px);
 
   text-align:center;
@@ -577,14 +538,12 @@ html,body{
 
 .animating-blob{pointer-events:none;transition:all 1s ease-in-out;z-index:9999;}
 
-/* modal */
 #modal-overlay{position:fixed;z-index:99999;left:0;top:0;width:100%;height:100%;
                background:rgba(0,0,0,.5);display:none;justify-content:center;align-items:center;}
 #modal-content{background:#fff;padding:20px;border-radius:5px;text-align:center;max-width:400px;}
 #start-over-btn{margin-top:15px;font-size:14px;cursor:pointer;}
 #final-screen{text-align:center;margin-top:30px;}
 
-/* misc helpers */
 #instructionsText{text-align:center;}
 #demoStaticPods{margin-top:20px;}
 #demoStaticPods,#quizStaticPods{min-height:240px;}
@@ -602,21 +561,20 @@ html,body{
     top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 500px;           /* or whatever fixed/max width you like */
+    width: 500px;
     padding: 20px;
-    background: #fff;       /* so it stands out */
+    background: #fff;
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     border-radius: 8px;
   }
   
-  /* make sure the quiz screen itself is a positioning context */
   .screen { position: relative; }
 
   :root{ --blob-size:110px; } 
 
 
 
-:root{ --instr-scale:1.5; }        /* adjust this number to taste */
+:root{ --instr-scale:1.5; }
 
 #instructions,
 #instructionsText,
@@ -629,10 +587,9 @@ html,body{
   line-height: 1.3em;
 }
 
-/* ── global “knob” for h2 section headings ─────────────────────── */
-:root{ --section-h2: 2.2rem; }      /* tweak this number any time */
+:root{ --section-h2: 2.2rem; }
 
-.screen h2{                         /* catches all h2 in every screen */
+.screen h2{
   font-size: var(--section-h2);
   margin: .25em 0;
 }

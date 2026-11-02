@@ -8,7 +8,7 @@ mirror <- function(file) {
   if (!dir.exists(paper_dir)) return(invisible())
   dest <- file.path(paper_dir, sub("^tables_and_charts/(main/)?", "", file))
   dir.create(dirname(dest), recursive = TRUE, showWarnings = FALSE)
-  file.copy(file, dest, overwrite = TRUE)
+  invisible(file.copy(file, dest, overwrite = TRUE))
 }
 
 to_analyze <- read_csv("data/built/round_level_data.csv", show_col_types = FALSE) %>%
@@ -155,7 +155,7 @@ foc_p <- function(m, v = NULL) {
   lin_test_p(m, setNames(1, paste0("categoryother_opt:draw_modegive", if (is.null(v)) "" else paste0(":", v))))
 }
 
-# ---- Table 1 (main/), A1 (pass_comps/), B1 (exclude_early/) ----
+# ---- Table 2, Supp. Tables 12-13: main regressions; Supp. Table 2: points lost ----
 
 term_map_main <- c(
   "categoryother_opt" = "OwnScoreSecondary",
@@ -171,6 +171,7 @@ samps <- list(
   pass_comps    = to_analyze %>% filter(all_comps_one_try),
   exclude_early = to_analyze %>% filter(!round_number %in% c(1, 2, 13, 14))
 )
+reg_names <- list(main = "table2_regs.tex", pass_comps = "supp_table12_regs.tex", exclude_early = "supp_table13_regs.tex")
 
 for (nm in names(samps)) {
   df <- samps[[nm]]
@@ -180,7 +181,7 @@ for (nm in names(samps)) {
     fe_reg(error ~ category*draw_mode*action_game_type | subject_id, df)
   )
   dir.create(file.path(out_dir, nm), recursive = TRUE, showWarnings = FALSE)
-  write_reg_table(models, term_map_main, file.path(out_dir, nm, "fig4_reg.tex"),
+  write_reg_table(models, term_map_main, file.path(out_dir, nm, reg_names[[nm]]),
                   "Dependent Var.: Probability of an error", note_after_stats = TRUE,
                   stats_rows = obs_row(models))
 }
@@ -192,10 +193,10 @@ models_lost <- list(
   fe_reg(exp_score_lost ~ category*draw_mode + category*action_game_type | subject_id, to_analyze),
   fe_reg(exp_score_lost ~ category*draw_mode*action_game_type | subject_id, to_analyze)
 )
-write_reg_table(models_lost, term_map_main, file.path(main_dir, "fig4_reg_lost.tex"),
+write_reg_table(models_lost, term_map_main, file.path(main_dir, "supp_table2_points_lost.tex"),
                 "Dependent Var.: Points lost", note_after_stats = TRUE, stats_rows = obs_row(models_lost))
 
-# ---- Table C1: moderation by error cost, complexity, round ----
+# ---- Supp. Table 5: moderation by error cost, complexity, round ----
 
 term_map_mod1 <- c(
   "categoryother_opt" = "OwnScoreSecondary",
@@ -226,12 +227,12 @@ for (v in mods) {
   foc_vals <- c(foc_vals, NA, foc_p(m_int, v))
   all_vals <- c(all_vals, lin_test_p(m_no, setNames(1, v)), NA)
 }
-write_reg_table(models_mod1, term_map_mod1, file.path(main_dir, "tab_mod1.tex"),
+write_reg_table(models_mod1, term_map_mod1, file.path(main_dir, "supp_table5_moderation_within.tex"),
                 "DV: Probability of an error", note_after_stats = FALSE,
                 pval_rows = list(Egocentrism = ego_vals, Focalism = foc_vals, Overall = all_vals),
                 pval_title = "Moderation t-test p-values")
 
-# ---- Table C2: moderation by individual differences ----
+# ---- Supp. Table 6: moderation by individual differences ----
 
 term_map_mod2 <- c(
   "categoryother_opt" = "OwnScoreSecondary",
@@ -253,13 +254,13 @@ term_map_mod2 <- c(
 
 mods <- c("educ_rank_c", "crt_c", "numeracy_c")
 models_mod2 <- map(mods, \(v) fe_reg(as.formula(paste("error ~ category*draw_mode*", v, "+ action_game_type | subject_id")), to_analyze))
-write_reg_table(models_mod2, term_map_mod2, file.path(main_dir, "tab_mod2.tex"),
+write_reg_table(models_mod2, term_map_mod2, file.path(main_dir, "supp_table6_moderation_individual.tex"),
                 "DV: Probability of an error", note_after_stats = FALSE,
                 pval_rows = list(Egocentrism = map2_dbl(models_mod2, mods, ego_p),
                                  Focalism = map2_dbl(models_mod2, mods, foc_p)),
                 pval_title = "Moderation t-test p-values", width = ".84\\linewidth")
 
-# ---- Table C5: by pair of rounds ----
+# ---- Supp. Table 11: by pair of rounds ----
 
 term_map_round <- c(
   "categoryother_opt" = "OwnScoreSecondary",
@@ -270,13 +271,13 @@ term_map_round <- c(
 models_round <- map(1:6, \(rg) feols(error ~ category*draw_mode + action_game_type | subject_id,
                                     data = filter(to_analyze, round_grp_within == rg),
                                     cluster = ~subject_id, notes = FALSE))
-write_reg_table(models_round, term_map_round, file.path(main_dir, "regs_round_grp_within.tex"),
+write_reg_table(models_round, term_map_round, file.path(main_dir, "supp_table11_round_pairs.tex"),
                 "DV: Probability of an error", note_after_stats = FALSE,
                 pval_rows = list(Egocentrism = map_dbl(models_round, ego_p),
                                  Focalism = map_dbl(models_round, foc_p)),
                 pval_title = "Mechanism t-test p-values")
 
-# ---- Tables C3, C4: who is classified as a payoff / own-score optimizer ----
+# ---- Supp. Tables 8-10: payoff optimizer, performance, own-score optimizer ----
 
 term_map_class <- c(
   "(Intercept)" = "Constant",
@@ -293,7 +294,7 @@ hetero_classif <- hetero %>%
 
 perf_models <- map(c("opt_all", "lost"), \(dv) map(c("educ_rank_c", "crt_c", "numeracy_c", "educ_rank_c + crt_c + numeracy_c"),
   \(x) feols(as.formula(paste(dv, "~ draw_mode +", x)), data = hetero_classif, vcov = "hetero")))
-write_reg_table(list_flatten(perf_models), term_map_class, file.path(main_dir, "tab_perf_mod.tex"),
+write_reg_table(list_flatten(perf_models), term_map_class, file.path(main_dir, "supp_table9_performance.tex"),
                 "", note_after_stats = TRUE,
                 group_header = c("   DV: & \\multicolumn{4}{c}{Optimal choices} & \\multicolumn{4}{c}{Points lost}\\\\",
                                  "   \\cmidrule(lr){2-5}\\cmidrule(lr){6-9}"),
@@ -303,13 +304,13 @@ for (dv in c("payoff_optimizer", "own_score_optimizer")) {
   models <- map(c("educ_rank_c", "crt_c", "numeracy_c", "educ_rank_c + crt_c + numeracy_c"),
                 \(x) feols(as.formula(paste(dv, "~ draw_mode +", x)), data = hetero_classif, vcov = "hetero"))
   write_reg_table(models, term_map_class,
-                  file.path(main_dir, if (dv == "payoff_optimizer") "tab_opt_class_mod.tex" else "tab_own_class_mod.tex"),
+                  file.path(main_dir, if (dv == "payoff_optimizer") "supp_table8_payoff_optimizer.tex" else "supp_table10_own_optimizer.tex"),
                   if (dv == "payoff_optimizer") "DV: Payoff optimizer" else "DV: Own-score optimizer",
                   note_after_stats = TRUE,
                   stats_rows = row("Observations", rep(fmt_int(nrow(hetero_classif)), length(models))))
 }
 
-# ---- Error rates by cell of the design ----
+# ---- Supp. Table 1: error rates by cell of the design ----
 
 cells <- to_analyze %>%
   filter(category %in% c("ego_opt", "other_opt")) %>%
@@ -327,10 +328,10 @@ writeLines(c(
   pmap_chr(cells, \(draw_mode, action_game_type, most, least) row(
     str_to_title(as.character(draw_mode)), c(str_to_title(as.character(action_game_type)), fmt_num(most), fmt_num(least)))),
   "   \\bottomrule", "\\end{tabular*}", "\\par\\endgroup"
-), file.path(main_dir, "tab_cell_errors.tex"))
-mirror(file.path(main_dir, "tab_cell_errors.tex"))
+), file.path(main_dir, "supp_table1_cell_errors.tex"))
+mirror(file.path(main_dir, "supp_table1_cell_errors.tex"))
 
-# ---- Heterogeneity within Adversarial and Cooperative rounds ----
+# ---- Supp. Table 3: heterogeneity within Adversarial and Cooperative rounds ----
 
 fmt_p <- \(p) if (p < .001) "<.001" else strip_zero(sprintf("%.3f", p))
 n_pct <- \(x) sprintf("%d (%d\\%%)", sum(x), round(100 * mean(x)))
@@ -380,10 +381,10 @@ writeLines(c(
   row("Both framings: own vs.\\ computer's score", c(role_tests[[1]][2], role_tests[[2]][2])),
   row("Both framings: focal vs.\\ non-focal score", c(role_tests[[1]][3], role_tests[[2]][3])),
   "   \\bottomrule", "\\end{tabular*}", "\\par\\endgroup"
-), file.path(main_dir, "tab_hetero_roles.tex"))
-mirror(file.path(main_dir, "tab_hetero_roles.tex"))
+), file.path(main_dir, "supp_table3_hetero_roles.tex"))
+mirror(file.path(main_dir, "supp_table3_hetero_roles.tex"))
 
-# ---- Table D1: self-reported strategic focus ----
+# ---- Supp. Table 4: self-reported strategic focus ----
 
 focus_labels <- c(
   "Both of the above were equally relevant." = "All dots equally",
@@ -418,10 +419,10 @@ writeLines(c(
   pmap_chr(select(focus, label, take.x, give.x, take.y, give.y, take, give),
            \(label, ...) row(label, c(...))),
   "   \\bottomrule", "\\end{tabular*}", "\\par\\endgroup"
-), file.path(main_dir, "tab_strategy_focus.tex"))
-mirror(file.path(main_dir, "tab_strategy_focus.tex"))
+), file.path(main_dir, "supp_table4_strategy_focus.tex"))
+mirror(file.path(main_dir, "supp_table4_strategy_focus.tex"))
 
-# ---- Table E1: response times ----
+# ---- Supp. Table 14: response times ----
 
 term_map_rt <- c(
   "categoryother_opt" = "OwnScoreSecondary",
@@ -433,5 +434,5 @@ models_rt <- list(
   fe_reg(time_to_decide ~ category*draw_mode + action_game_type | subject_id + round_grp_number, to_analyze),
   fe_reg(time_to_decide ~ category*draw_mode + action_game_type | subject_id + round_grp_number, filter(to_analyze, always_opt))
 )
-write_reg_table(models_rt, term_map_rt, file.path(main_dir, "tab_response_time.tex"),
+write_reg_table(models_rt, term_map_rt, file.path(main_dir, "supp_table14_response_time.tex"),
                 "DV: Response time (s)", note_after_stats = TRUE, stats_rows = obs_row(models_rt))

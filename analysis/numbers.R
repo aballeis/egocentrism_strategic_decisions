@@ -266,12 +266,12 @@ rg <- map_chr(1:6, \(g) {
 })
 add("Moderation", "Results, Learning (SI Table 11)", "Egocentrism / focalism by round pair", paste(rg, collapse = "; "))
 
-fig7_n <- to_analyze %>%
+learn_n <- to_analyze %>%
   filter(!is.na(focal_works)) %>%
   transmute(x = round_num_within, cat = category, sal = focal_works) %>%
   pivot_longer(c(cat, sal), values_transform = as.character) %>%
   count(x, name, value)
-add("Moderation", "Supp. Fig. 3 caption", "Point sizes (N per round number and line)", sprintf("N = %d to N = %d", min(fig7_n$n), max(fig7_n$n)))
+add("Moderation", "Supp. Fig. 3 caption", "Point sizes (N per round number and line)", sprintf("N = %d to N = %d", min(learn_n$n), max(learn_n$n)))
 
 rt <- fe_reg(time_to_decide ~ category*draw_mode + action_game_type | subject_id + round_grp_number)
 add("Moderation", "Methods, Regression analyses; SI Table 14", "Participants choosing the payoff-maximizing pod in all 24 rounds",

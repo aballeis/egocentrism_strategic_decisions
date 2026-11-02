@@ -2,8 +2,7 @@ library(tidyverse)
 library(janitor)
 library(jsonlite)
 
-# Game data come from the JSON log that the game passed back to Qualtrics.
-# Participants whose log does not contain all 24 rounds are dropped.
+# Game data come from the JSON log the game passed back to Qualtrics; participants missing any of the 24 rounds are dropped.
 
 dir.create("data/built", showWarnings = FALSE)
 tz <- "America/New_York"
@@ -70,9 +69,7 @@ survey <- qualtrics %>%
 
 # ---- Analysis variables ----
 
-# Score difference (adversarial) or sum (cooperative) if the participant picks `pod` ("A"/"B").
-# Take: participant gets the picked pod's red dots, computer gets the other pod's blue dots.
-# Give: computer gets the picked pod's blue dots, participant gets the other pod's red dots.
+# Score difference (Adversarial) or sum (Cooperative) if the participant picks `pod`; in Give, the picked pod goes to the computer.
 pod_score <- function(pod, A1, A2, B1, B2, take, adv) {
   own   <- if (pod == "A") if_else(take, A1, B1) else if_else(take, B1, A1)
   other <- if (pod == "A") if_else(take, B2, A2) else if_else(take, A2, B2)
@@ -96,7 +93,7 @@ round_data <- rounds %>%
     error = 1 - play1_opt,
     exp_score = if_else(move1 == "A", score_A, score_B),
     exp_score_lost = pmax(score_A, score_B) - exp_score,
-    # Pod that maximizes the participant's own score vs. the computer's (helps/hurts it as needed)
+    # Pod that maximizes the participant's own score
     ego_pod = if_else(take, if_else(A1 >= B1, "A", "B"), if_else(A1 <= B1, "A", "B")),
     exp_score_ego = if_else(ego_pod == "A", score_A, score_B),
     other_pod = if_else(take == adv, if_else(A2 >= B2, "A", "B"), if_else(A2 <= B2, "A", "B")),

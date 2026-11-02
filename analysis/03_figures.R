@@ -11,12 +11,12 @@ mirror <- function(file) {
   if (!dir.exists(paper_dir)) return(invisible())
   dest <- file.path(paper_dir, sub("^tables_and_charts/(main/)?", "", file))
   dir.create(dirname(dest), recursive = TRUE, showWarnings = FALSE)
-  file.copy(file, dest, overwrite = TRUE)
+  invisible(file.copy(file, dest, overwrite = TRUE))
 }
 
 to_analyze <- read_csv("data/built/round_level_data.csv", show_col_types = FALSE)
 
-# ---- Bar charts (Figures 2, 3) ----
+# ---- Figs. 2-3: bar charts ----
 
 cluster_mean_se <- function(d, v) {
   d <- filter(d, !is.na(.data[[v]]))
@@ -25,7 +25,7 @@ cluster_mean_se <- function(d, v) {
   c(mean = unname(coef(fit)[1]), se = unname(se(fit)[1]))
 }
 
-# balanced = equal weight on Take and Give (Figure 2)
+# balanced = equal weight on Take and Give (Fig. 2)
 estimate <- function(d, v, balanced) {
   if (balanced) {
     tk <- cluster_mean_se(filter(d, draw_mode == "take"), v)
@@ -134,7 +134,7 @@ save_grob <- function(g, file) {
   mirror(file)
 }
 
-# ---- Heterogeneity diamond (Figure 5) ----
+# ---- Fig. 4: heterogeneity diamond ----
 
 diamond_counts <- function(df) {
   df %>%
@@ -181,7 +181,7 @@ diamond_plot <- function(counts, panel_name, points = TRUE) {
   p
 }
 
-fig5_hetero <- function(df, points = TRUE) {
+fig_hetero <- function(df, points = TRUE) {
   counts <- diamond_counts(df)
   x_lab <- ggplot() +
     annotate("text", x = 0.5, y = 1, label = "Subobjective score participant optimized", fontface = "bold", size = 5) +
@@ -193,7 +193,7 @@ fig5_hetero <- function(df, points = TRUE) {
     x_lab + plot_layout(heights = c(1, 0.09))
 }
 
-# ---- Error rate by stimulus features and round (Figures 4, 6) ----
+# ---- Fig. 5, Supp. Fig. 3: error rate by stimulus features and round ----
 
 line_levels <- c("Own score of primary importance", "Own score of secondary importance",
                  "Focal score of primary importance", "Focal score of secondary importance")
@@ -225,14 +225,14 @@ line_theme <- theme_minimal(base_size = 12) +
   )
 
 line_plot <- function(d, size_range) {
-  ggplot(d, aes(x = x, y = error_rate, color = line_lab, size = n, weight = n)) +
-    geom_point(alpha = 0.60) +
+  ggplot(d, aes(x = x, y = error_rate, color = line_lab, weight = n)) +
+    geom_point(aes(size = n), alpha = 0.60) +
     geom_smooth(method = "lm", se = FALSE, linewidth = 0.9) +
     scale_color_manual(values = line_palette, breaks = line_levels) +
     scale_size_continuous(range = size_range, guide = "none")
 }
 
-fig4_theme <- line_theme +
+stim_theme <- line_theme +
   theme(
     legend.position = "bottom",
     legend.direction = "horizontal",
@@ -244,9 +244,9 @@ fig4_theme <- line_theme +
     aspect.ratio = 0.42,
     plot.tag = element_text(face = "bold", size = 15)
   )
-fig4_legend <- guides(color = guide_legend(nrow = 2, byrow = TRUE, override.aes = list(size = 3.0, alpha = 1)))
+stim_legend <- guides(color = guide_legend(nrow = 2, byrow = TRUE, override.aes = list(size = 3.0, alpha = 1)))
 
-fig4_stimuli <- function(df) {
+fig_stimuli <- function(df) {
   by_cost <- error_by(df, "score_lost_not_opt")
   max_cost <- max(1, floor(max(by_cost$x)))
   p_cost <- line_plot(by_cost, c(1.5, 4.2)) +
@@ -254,16 +254,16 @@ fig4_stimuli <- function(df) {
     scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, 0.25), labels = c("0.00", "0.25", "0.50", "0.75", "1.00"),
                        expand = c(0.005, 0.005)) +
     labs(x = "Points lost if error", y = "Error rate", tag = "a") +
-    fig4_theme + fig4_legend
+    stim_theme + stim_legend
   p_dots <- line_plot(error_by(df, "dots_on_screen"), c(0.8, 2.6)) +
     scale_x_continuous(breaks = c(12, 18, 24), labels = c("12", "18", "24"), expand = c(0.02, 0.02)) +
     scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, 0.25), expand = c(0.005, 0.005)) +
     labs(x = "Total dots on screen", y = NULL, tag = "b") +
-    fig4_theme + theme(axis.title.y = element_blank()) + fig4_legend
+    stim_theme + theme(axis.title.y = element_blank()) + stim_legend
   (p_cost + p_dots) + plot_layout(ncol = 2, guides = "collect") & theme(legend.position = "bottom")
 }
 
-fig6_learning <- function(df) {
+fig_learning <- function(df) {
   d <- error_by(df, "round_num_within")
   line_plot(d, c(2.3, 2.6)) +
     scale_x_continuous(breaks = sort(unique(d$x)), expand = c(0.02, 0.02)) +
@@ -284,7 +284,7 @@ fig6_learning <- function(df) {
     guides(color = guide_legend(nrow = 4, byrow = TRUE, override.aes = list(size = 3.0, alpha = 1)))
 }
 
-# ---- Error rate by the aggregate score from maximizing own score (Fig. 6; focal version Supplementary Fig. 4) ----
+# ---- Fig. 6, Supp. Fig. 4: error rate by score from maximizing own or focal score ----
 
 focal_palette <- setNames(unname(line_palette[3:4]), line_levels[3:4])
 
@@ -309,7 +309,7 @@ satisficing_panel <- function(df, role, x_lab, tag, xvar = "exp_score_ego", foca
     scale_y_continuous(breaks = seq(0, 1, 0.25), labels = c("0.00", "0.25", "0.50", "0.75", "1.00"), expand = c(0, 0)) +
     coord_cartesian(ylim = c(0, 1)) +
     labs(x = x_lab, y = if (tag == "a") "Error rate" else NULL, title = str_to_title(role), tag = tag) +
-    fig4_theme +
+    stim_theme +
     theme(plot.title = element_text(face = "bold", size = 13, hjust = 0.5)) +
     guides(color = guide_legend(nrow = 1, override.aes = list(size = 3.0, alpha = 1)))
 }
@@ -327,14 +327,17 @@ fig_satisficing_focal <- function(df) {
 }
 
 # ---- Write figures ----
-# File names match the draft's Overleaf: fig6_dots_dist = Fig. 5, fig_satisficing = Fig. 6, fig7_learn = Supplementary Fig. 3.
 
 samps <- list(
   main          = to_analyze,
-  pass_comps    = to_analyze %>% filter(all_comps_one_try),                       # Supplementary Section 6
-  exclude_early = to_analyze %>% filter(!round_number %in% c(1, 2, 13, 14)),      # Supplementary Section 7
-  adv_only      = to_analyze %>% filter(action_game_type == "adversarial"),       # Supplementary Section 3
-  coop_only     = to_analyze %>% filter(action_game_type == "cooperative")        # Supplementary Section 3
+  pass_comps    = to_analyze %>% filter(all_comps_one_try),
+  exclude_early = to_analyze %>% filter(!round_number %in% c(1, 2, 13, 14))
+)
+
+fig_names <- list(
+  main          = c("fig2_ego", "fig3_focal", "fig4_hetero", "fig5_stimuli", "supp_fig3_learning"),
+  pass_comps    = c("supp_fig5_ego", "supp_fig6_focal", "supp_fig8_hetero", "supp_fig7_stimuli", "supp_fig9_learning"),
+  exclude_early = c("supp_fig10_ego", "supp_fig11_focal", "supp_fig13_hetero", "supp_fig12_stimuli", "supp_fig14_learning")
 )
 
 save_gg <- function(p, file, w, h) {
@@ -346,14 +349,17 @@ for (nm in names(samps)) {
   df <- samps[[nm]]
   dir <- file.path(out_dir, nm)
   dir.create(dir, recursive = TRUE, showWarnings = FALSE)
-  if (nm %in% c("main", "pass_comps", "exclude_early")) {
-    save_grob(fig2_ego(df), file.path(dir, "fig2_ego.png"))
-    save_grob(fig3_focal(df), file.path(dir, "fig3_focal.png"))
-    save_gg(fig4_stimuli(df), file.path(dir, "fig6_dots_dist.png"), 9.8, 3.4)
-    save_gg(fig6_learning(df), file.path(dir, "fig7_learn.png"), 9.8, 3.6)
-  }
-  save_gg(fig5_hetero(df), file.path(dir, "fig5_hetero.png"), 13.2, 5.1)
-  if (nm == "main") save_gg(fig5_hetero(df, FALSE), file.path(dir, "fig5_hetero_blank.png"), 13.2, 5.1)
-  if (nm == "main") save_gg(fig_satisficing(df), file.path(dir, "fig_satisficing.png"), 9.8, 3.8)
-  if (nm == "main") save_gg(fig_satisficing_focal(df), file.path(dir, "fig_satisficing_focal.png"), 9.8, 3.8)
+  f <- \(i) file.path(dir, paste0(fig_names[[nm]][i], ".png"))
+  save_grob(fig2_ego(df), f(1))
+  save_grob(fig3_focal(df), f(2))
+  save_gg(fig_hetero(df), f(3), 13.2, 5.1)
+  save_gg(fig_stimuli(df), f(4), 9.8, 3.4)
+  save_gg(fig_learning(df), f(5), 9.8, 3.6)
 }
+
+main_dir <- file.path(out_dir, "main")
+save_gg(fig_hetero(to_analyze, FALSE), file.path(main_dir, "fig4_hetero_blank.png"), 13.2, 5.1)
+save_gg(fig_hetero(filter(to_analyze, action_game_type == "adversarial")), file.path(main_dir, "supp_fig1_hetero_adversarial.png"), 13.2, 5.1)
+save_gg(fig_hetero(filter(to_analyze, action_game_type == "cooperative")), file.path(main_dir, "supp_fig2_hetero_cooperative.png"), 13.2, 5.1)
+save_gg(fig_satisficing(to_analyze), file.path(main_dir, "fig6_satisficing.png"), 9.8, 3.8)
+save_gg(fig_satisficing_focal(to_analyze), file.path(main_dir, "supp_fig4_satisficing_focal.png"), 9.8, 3.8)
