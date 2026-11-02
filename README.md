@@ -48,4 +48,4 @@ Released under the MIT License (`LICENSE`). Citation information is in `CITATION
 
 ## The experimental interface (game)
 
-To play locally, double-click `interface/run_interface_locally.bat` (Windows) or `interface/run_interface_locally.command` (Mac). It starts the game and opens it in your browser inside a fixed-size frame, as in the Qualtrics survey; close the terminal window to stop. Responses are saved to `interface/data/`. Rounds are drawn from `interface/stimuli/`, which `interface/generate_stimuli.R` generates. To run the game in a survey, host `interface/` on any web server with persistent storage and embed its URL in an iframe.
+To play locally, double-click `interface/run_interface_locally.bat` (Windows). It starts the game and opens it in your browser inside a fixed-size frame, as in the Qualtrics survey; close the terminal window to stop. Responses are saved to `interface/data/`. Rounds are drawn from `interface/stimuli/`, which `interface/generate_stimuli.R` generates. To run the game in a survey, host `interface/` on any web server with persistent storage and embed its URL in an iframe.
