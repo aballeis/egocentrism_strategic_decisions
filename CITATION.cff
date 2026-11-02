@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this code or data, please cite it as below."
+title: "Egocentrism in Strategic Decisions: data, code, and materials"
+authors:
+  - family-names: Balleisen
+    given-names: Aaron S.
+    affiliation: "Department of Social and Decision Sciences, Carnegie Mellon University"
+    email: aballeis@andrew.cmu.edu
+version: 1.0.0
+date-released: 2026-11-02
+license: MIT
+repository-code: "https://github.com/aballeis/egocentrism_strategic_decisions"
+keywords:
+  - egocentrism
+  - strategic decision-making
+  - focalism
+  - experiment
