@@ -20,17 +20,17 @@ parse_game_log <- function(json) {
   as_tibble(x)
 }
 
-game_cols <- c("subject_id", "qualtrics_id", "action_game_type", "draw_is_take", "draw_mode",
+game_cols <- c("subject_id", "participant_id", "action_game_type", "draw_is_take", "draw_mode",
                "round_number", "round_grp_number", "round_start_time", "timestamp1", "move1",
                "round_payoff", "A1", "A2", "B1", "B2",
                "category_adv_take", "category_adv_give", "category_coop_take", "category_coop_give")
 
 rounds <- qualtrics %>%
-  transmute(qualtrics_id = response_id, log = map(game_log_json, parse_game_log)) %>%
+  transmute(participant_id, log = map(game_log_json, parse_game_log)) %>%
   unnest(log) %>%
   select(all_of(game_cols)) %>%
   mutate(across(everything(), as.character)) %>%
-  group_by(qualtrics_id) %>%
+  group_by(participant_id) %>%
   filter(sum(!is.na(round_number)) == 24, subject_id %in% first(na.omit(subject_id))) %>%
   ungroup() %>%
   type_convert(col_types = cols(.default = col_guess(), move1 = col_character(),
@@ -45,7 +45,7 @@ attempts <- function(json) {
 
 survey <- qualtrics %>%
   transmute(
-    qualtrics_id = response_id,
+    participant_id,
     quiz = map(quiz_info, attempts),
     crt = str_detect(crt1_1, "^5") + str_detect(crt1_2, "^5") + str_detect(crt1_3, "^47"),
     numeracy = str_detect(num1, ".1") + str_detect(num2, "^10") + str_detect(num3, "^500"),
@@ -78,7 +78,7 @@ pod_score <- function(pod, A1, A2, B1, B2, take, adv) {
 centered <- \(x) x - median(x, na.rm = TRUE)
 
 round_data <- rounds %>%
-  inner_join(survey, by = "qualtrics_id") %>%
+  inner_join(survey, by = "participant_id") %>%
   mutate(
     take = draw_is_take == 1,
     adv = action_game_type == "adversarial",
