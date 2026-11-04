@@ -44,7 +44,7 @@ python  analysis/fig1_interface.py
 
 ## License and citation
 
-Released under the MIT License (`LICENSE`). Citation information is in `CITATION.cff`.
+Released under the MIT License (`LICENSE`). Archived on Zenodo: [doi:10.5281/zenodo.23962728](https://doi.org/10.5281/zenodo.23962728). Citation information is in `CITATION.cff`.
 
 ## The experimental interface (game)
 
